@@ -2,6 +2,7 @@
 package com.example.buzzboardfinalproject
 
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -25,19 +26,34 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        binding.bottomNavigationView.setOnItemSelectedListener { item ->
+        binding.bottomNavigationView.setOnItemSelectedListener { item: MenuItem ->
             when (item.itemId) {
-                R.id.home -> replaceFragment(HomeFragment())
-                R.id.favorites -> replaceFragment(FavoritesFragment())
-                R.id.profile -> replaceFragment(ProfileFragment())
-                R.id.add_post -> replaceFragment(AddPostFragment())
-                R.id.messages -> replaceFragment(MessagesFragment())
-
-                else -> {
-
+                R.id.home -> {
+                    replaceFragment(HomeFragment())
+                    true
                 }
+                R.id.favorites -> {
+                    replaceFragment(FavoritesFragment())
+                    true
+                }
+                R.id.profile -> {
+                    replaceFragment(ProfileFragment())
+                    true
+                }
+                R.id.add_post -> {
+                    replaceFragment(AddPostFragment())
+                    true
+                }
+                R.id.messages -> {
+                    replaceFragment(MessagesFragment())
+                    true
+                }
+
+                else -> false
+
             }
-            true
+
+
         }
     }
 
