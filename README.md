@@ -124,9 +124,8 @@ BuzzBoard is a campus-centric app designed to enhance student engagement, stream
 ## Wireframes
 <img src="https://i.imgur.com/rVUmHfq.jpeg" width=600>
 
-
-
 ### [BONUS] Digital Wireframes & Mockups
+<img src="https://i.imgur.com/rVUmHfq.jpeg" width=600>
 
 ### [BONUS] Interactive Prototype
 
