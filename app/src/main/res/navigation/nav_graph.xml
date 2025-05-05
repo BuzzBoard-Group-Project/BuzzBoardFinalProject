@@ -10,7 +10,7 @@
         android:name="com.example.buzzboardfinalproject.HomeFragment"
         android:label="Home" />
 
-    <!-- Favorites -->
+    <!-- Favorites tab -->
     <fragment
         android:id="@+id/favoritesFragment"
         android:name="com.example.buzzboardfinalproject.FavoritesFragment"
