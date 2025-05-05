@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/HomeFragment">
+
+    <!-- Home -->
+    <fragment
+        android:id="@+id/HomeFragment"
+        android:name="com.example.buzzboardfinalproject.HomeFragment"
+        android:label="Home" />
+
+    <!-- Favorites -->
+    <fragment
+        android:id="@+id/favoritesFragment"
+        android:name="com.example.buzzboardfinalproject.FavoritesFragment"
+        android:label="Favorites" />
+
+    <!-- Add Post -->
+    <fragment
+        android:id="@+id/addPostFragment"
+        android:name="com.example.buzzboardfinalproject.AddPostFragment"
+        android:label="Add Post">
+        <action
+            android:id="@+id/action_addPostFragment_to_postPictureFragment"
+            app:destination="@id/postPictureFragment" />
+        <action
+            android:id="@+id/action_addPostFragment_to_postPollFragment"
+            app:destination="@id/postPollFragment" />
+        <action
+            android:id="@+id/action_addPostFragment_to_reminderFragment"
+            app:destination="@id/reminderFragment" />
+    </fragment>
+
+    <!-- Messages -->
+    <fragment
+        android:id="@+id/messagesFragment"
+        android:name="com.example.buzzboardfinalproject.MessagesFragment"
+        android:label="Messages" />
+
+    <!-- Profile -->
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.buzzboardfinalproject.ProfileFragment"
+        android:label="Profile" />
+
+    <!-- Post Picture -->
+    <fragment
+        android:id="@+id/postPictureFragment"
+        android:name="com.example.buzzboardfinalproject.PostPictureFragment"
+        android:label="Post Picture" />
+
+    <!-- Post Poll -->
+    <fragment
+        android:id="@+id/postPollFragment"
+        android:name="com.example.buzzboardfinalproject.PostPollFragment"
+        android:label="Post Poll" />
+
+    <!-- Reminder -->
+    <fragment
+        android:id="@+id/reminderFragment"
+        android:name="com.example.buzzboardfinalproject.ReminderFragment"
+        android:label="Reminder" />
+</navigation>
