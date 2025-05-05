@@ -27,8 +27,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
-
-                    R.id.home -> replaceFragment(HomeFragment())
+                R.id.home -> replaceFragment(HomeFragment())
                 R.id.favorites -> replaceFragment(FavoritesFragment())
                 R.id.profile -> replaceFragment(ProfileFragment())
                 R.id.add_post -> replaceFragment(AddPostFragment())
