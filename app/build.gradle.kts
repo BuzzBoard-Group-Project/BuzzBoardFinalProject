@@ -42,17 +42,31 @@ android {
 }
 
 dependencies {
+    // Firebase BoM — keeps all Firebase libs in sync
+    implementation(platform(libs.firebase.bom))
 
+    // Firebase dependencies (versions managed by BoM)
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.database)
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.storage)
+
+    // AndroidX and Material
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.auth)
-    implementation(libs.firebase.database)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.navigation.fragment)
     implementation(libs.androidx.navigation.ui)
+
+    // Glide (image loading)
+    implementation(libs.glide)
+
+    // OR if you're not using kapt:
+    annotationProcessor(libs.compiler)
+
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
