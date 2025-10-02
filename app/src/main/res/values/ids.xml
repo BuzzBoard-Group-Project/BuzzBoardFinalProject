@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="recyclerCaption" type="id" />
+    <item name="recyclerLocation" type="id" />
+    <item name="recyclerTime" type="id" />
+    <item name="recyclerTitle" type="id" />
+    <item name="recyclerImage" type="id" />
+</resources>

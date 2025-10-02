@@ -1,9 +1,11 @@
 package com.example.buzzboardfinalproject
 
-data class Post (
-    val username: String,
-    val title: String,
-    val description: String,
-    val location: String,
-    val imageResId: Int
+data class Post(
+    val postid: String = "",
+    val title: String = "",
+    val description: String = "",
+    val location: String = "",
+    val postimage: String = "",
+    val publisher: String = "",
+
 )

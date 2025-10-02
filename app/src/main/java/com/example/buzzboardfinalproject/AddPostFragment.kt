@@ -1,11 +1,11 @@
 package com.example.buzzboardfinalproject
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 
 class AddPostFragment : Fragment() {
 
@@ -20,17 +20,21 @@ class AddPostFragment : Fragment() {
         val pollOption = view.findViewById<View>(R.id.pollPostCard)
         val reminderOption = view.findViewById<View>(R.id.reminderPostCard)
 
-        // Set navigation for each option
+        // Launch AddPostActivity when picture option is clicked
         pictureOption.setOnClickListener {
-            findNavController().navigate(R.id.action_addPostFragment_to_postPictureFragment)
+            val intent = Intent(requireContext(), AddPostActivity::class.java)
+            startActivity(intent)
         }
 
+        // You can set up poll and reminder to go to their own activities too
         pollOption.setOnClickListener {
-            findNavController().navigate(R.id.action_addPostFragment_to_postPollFragment)
+            val intent = Intent(requireContext(), PostPollFragment::class.java)
+            startActivity(intent)
         }
 
         reminderOption.setOnClickListener {
-            findNavController().navigate(R.id.action_addPostFragment_to_reminderFragment)
+            val intent = Intent(requireContext(), ReminderFragment::class.java)
+            startActivity(intent)
         }
 
         return view

@@ -1,38 +1,73 @@
 package com.example.buzzboardfinalproject
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-
+import com.example.buzzboardfinalproject.databinding.FragmentHomeBinding
+import com.google.firebase.database.*
 
 class HomeFragment : Fragment() {
 
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var postAdapter: PostAdapter
+    private var _binding: FragmentHomeBinding? = null
+    private val binding get() = _binding!!
+
+    private lateinit var databaseRef: DatabaseReference
+    private lateinit var postList: ArrayList<Post>
+    private lateinit var adapter: PostAdapter2
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_home, container, false)
+    ): View {
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
-        recyclerView = view.findViewById(R.id.postRecyclerView)
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        // ✅ Set up Firebase and RecyclerView
+        databaseRef = FirebaseDatabase.getInstance().getReference("Posts")
+        postList = ArrayList()
+        adapter = PostAdapter2(requireContext(), postList)
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerView.adapter = adapter
 
-        // Dummy posts
-        val posts = listOf(
-            Post("alex123", "Dorm Room Decor", "Check out my new dorm setup!", "Moore Hall", R.drawable.sample1),
-            Post("sarah_m", "Free Pizza", "Giving away free pizza in Hunter Mc-Daniel!", "HM 24E", R.drawable.sample2),
-            Post("vsuknitters", "Knitting Club Meeting", "Join our knitting club meeting today!", "Library Room 203", R.drawable.sample3)
-        )
+        fetchPostsFromFirebase()
 
-        postAdapter = PostAdapter(posts)
-        recyclerView.adapter = postAdapter
+        return binding.root
+    }
 
-        return view
+    private fun fetchPostsFromFirebase() {
+        databaseRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                postList.clear()
+
+                // 🧪 ✅ DEBUG PRINT — This is the part you add!
+                println("🔥 Snapshot count: ${snapshot.childrenCount}")
+                for (dataSnap in snapshot.children) {
+                    println("👉 Post key: ${dataSnap.key}")
+                    println("👉 Post data: ${dataSnap.value}")
+                }
+
+                // Normal loop to fill list
+                for (dataSnap in snapshot.children) {
+                    val post = dataSnap.getValue(Post::class.java)
+                    if (post != null) {
+                        postList.add(post)
+                    }
+                }
+
+                adapter.notifyDataSetChanged()
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                println("❌ Firebase error: ${error.message}")
+            }
+        })
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
