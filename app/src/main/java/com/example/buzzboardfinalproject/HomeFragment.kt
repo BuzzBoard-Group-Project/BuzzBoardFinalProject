@@ -25,12 +25,17 @@ class HomeFragment : Fragment() {
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
-        // ✅ Set up Firebase and RecyclerView
+        // 🔸 Firebase + RecyclerView
         databaseRef = FirebaseDatabase.getInstance().getReference("Posts")
         postList = ArrayList()
         adapter = PostAdapter2(requireContext(), postList)
+
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
+        binding.recyclerView.setHasFixedSize(true)
+        binding.recyclerView.itemAnimator = null
+
+
 
         fetchPostsFromFirebase()
 
@@ -42,19 +47,9 @@ class HomeFragment : Fragment() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 postList.clear()
 
-                // 🧪 ✅ DEBUG PRINT — This is the part you add!
-                println("🔥 Snapshot count: ${snapshot.childrenCount}")
-                for (dataSnap in snapshot.children) {
-                    println("👉 Post key: ${dataSnap.key}")
-                    println("👉 Post data: ${dataSnap.value}")
-                }
-
-                // Normal loop to fill list
                 for (dataSnap in snapshot.children) {
                     val post = dataSnap.getValue(Post::class.java)
-                    if (post != null) {
-                        postList.add(post)
-                    }
+                    if (post != null) postList.add(post)
                 }
 
                 adapter.notifyDataSetChanged()
