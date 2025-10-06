@@ -36,6 +36,11 @@
         <activity
             android:name=".MainActivity"
             android:exported="false"></activity>
+
+        <activity
+            android:name=".PostDetailActivity"
+            android:exported="false"
+            android:label="Post Details" />
     </application>
 
 </manifest>
