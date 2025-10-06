@@ -31,7 +31,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="BuzzBoard"
+            android:text="@string/buzzboard"
             android:textSize="22sp"
             android:textStyle="bold"
             android:textColor="@color/black" />
@@ -77,8 +77,87 @@
             android:textColor="@color/black"
             android:textColorHint="@color/grey"
             android:background="@null"
-            android:inputType="text" />
+            android:inputType="text"
+            tools:ignore="HardcodedText" />
     </LinearLayout>
+
+    <!-- 🗂️ Horizontal Filter Buttons -->
+    <HorizontalScrollView
+        android:id="@+id/filterScrollView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:scrollbars="none"
+        app:layout_constraintTop_toBottomOf="@id/searchBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:id="@+id/filterContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="4dp">
+
+            <Button
+                android:id="@+id/filterAll"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/filter_button_bg"
+                android:text="All"
+                android:textColor="@color/black"
+                android:textSize="14sp"/>
+
+            <Button
+                android:id="@+id/filterEvents"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/filter_button_bg"
+                android:text="🎉 Events"
+                android:textColor="@color/black"
+                android:textSize="14sp"/>
+
+            <Button
+                android:id="@+id/filterFood"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/filter_button_bg"
+                android:text="🍔 Food"
+                android:textColor="@color/black"
+                android:textSize="14sp"/>
+
+            <Button
+                android:id="@+id/filterPerformances"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/filter_button_bg"
+                android:text="🎭 Performances"
+                android:textColor="@color/black"
+                android:textSize="14sp"/>
+
+            <Button
+                android:id="@+id/filterGiveaways"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/filter_button_bg"
+                android:text="💬 Giveaways"
+                android:textColor="@color/black"
+                android:textSize="14sp"/>
+        </LinearLayout>
+    </HorizontalScrollView>
 
 
     <!-- 📰 RecyclerView Feed -->
@@ -87,7 +166,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@color/white"
-        app:layout_constraintTop_toBottomOf="@id/searchBar"
+        app:layout_constraintTop_toBottomOf="@id/filterScrollView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
