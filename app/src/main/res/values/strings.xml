@@ -22,4 +22,10 @@
     <string name="favorites_fragment">Favorites Fragment</string>
     <string name="messages_fragment">Messages Fragment</string>
     <string name="profile_fragment">Profile Fragment</string>
+    <string name="detail_username">username123</string>
+    <string name="post_image">Post image</string>
+    <string name="detail_post_title">Post Title</string>
+    <string name="detail_description">This is the detailed description of the post...</string>
+    <string name="detail_location">Location: Los Angeles, CA</string>
+    <string name="detail_datetime">Posted on: Sept 29, 2025</string>
 </resources>

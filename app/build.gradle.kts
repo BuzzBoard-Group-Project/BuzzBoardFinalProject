@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("com.google.gms.google-services")
+    id("kotlin-kapt")
 
 }
 
@@ -64,7 +65,7 @@ dependencies {
     implementation(libs.glide)
 
     // OR if you're not using kapt:
-    annotationProcessor(libs.compiler)
+    kapt(libs.compiler)
 
     // Testing
     testImplementation(libs.junit)

@@ -17,20 +17,11 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical">
 
-            <ImageView
-                android:id="@+id/imgProfileIcon"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_profile_placeholder"
-                android:scaleType="centerCrop"
-                android:background="@drawable/circle_background"
-                android:contentDescription="Profile picture"/>
-
             <TextView
-                android:id="@+id/tvUsername"
+                android:id="@+id/tvPublisher"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="username123"
+                android:text="@string/detail_username"
                 android:textStyle="bold"
                 android:textSize="16sp"
                 android:paddingStart="8dp"/>
@@ -43,14 +34,14 @@
             android:layout_height="200dp"
             android:layout_marginTop="8dp"
             android:scaleType="centerCrop"
-            android:contentDescription="Post image"/>
+            android:contentDescription="@string/post_image"/>
 
         <!-- Title -->
         <TextView
             android:id="@+id/tvPostTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Post Title"
+            android:text="@string/detail_post_title"
             android:textSize="18sp"
             android:textStyle="bold"
             android:paddingTop="8dp"/>
@@ -60,16 +51,17 @@
             android:id="@+id/tvPostDetailDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="This is the detailed description of the post..."
+            android:text="@string/detail_description"
             android:textSize="15sp"
             android:paddingTop="4dp"/>
 
         <!-- Location -->
+
         <TextView
             android:id="@+id/tvLocation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Location: Los Angeles, CA"
+            android:text="@string/detail_location"
             android:textSize="14sp"
             android:paddingTop="6dp"/>
 
@@ -78,10 +70,15 @@
             android:id="@+id/tvPostDetailDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Posted on: Sept 29, 2025"
+            android:text="@string/detail_datetime"
             android:textSize="14sp"
             android:paddingTop="2dp"/>
 
+        <ImageButton
+            android:id="@+id/imageButton4"
+            android:layout_width="87dp"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/baseline_favorite_border_24" />
 
 
     </LinearLayout>

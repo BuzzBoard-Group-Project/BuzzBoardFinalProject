@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.content.Intent
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.buzzboardfinalproject.databinding.FragmentHomeBinding
@@ -28,7 +29,11 @@ class HomeFragment : Fragment() {
         // ✅ Set up Firebase and RecyclerView
         databaseRef = FirebaseDatabase.getInstance().getReference("Posts")
         postList = ArrayList()
-        adapter = PostAdapter2(requireContext(), postList)
+        adapter = PostAdapter2(requireContext(), postList) { selectedPost ->
+            val intent = Intent(requireContext(), PostDetailActivity::class.java)
+            intent.putExtra("post_id", selectedPost.postid) // Pass post ID
+            startActivity(intent)
+        }
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
 
@@ -41,8 +46,6 @@ class HomeFragment : Fragment() {
         databaseRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 postList.clear()
-
-                // 🧪 ✅ DEBUG PRINT — This is the part you add!
                 println("🔥 Snapshot count: ${snapshot.childrenCount}")
                 for (dataSnap in snapshot.children) {
                     println("👉 Post key: ${dataSnap.key}")
