@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".HomeFragment">
+    tools:context=".HomeFragment"
+    tools:ignore="ExtraText">
 
     <!-- 🧭 Top Bar -->
     <LinearLayout
@@ -35,15 +36,50 @@
             android:textStyle="bold"
             android:textColor="@color/black" />
 
-        <!-- 🔍 Search Icon -->
+
+
+    </LinearLayout>
+
+    <!-- 🔍 Search Bar -->
+    <LinearLayout
+        android:id="@+id/searchBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:background="@drawable/search_bar_bg"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toBottomOf="@id/topBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
         <ImageView
-            android:id="@+id/searchIconTop"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:src="@drawable/ic_search"
             android:contentDescription="@string/search"
-            app:tint="@color/black" />
+            app:tint="@color/grey" />
+
+        <EditText
+            android:id="@+id/searchInput"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:hint="Search events, clubs..."
+            android:textColor="@color/black"
+            android:textColorHint="@color/grey"
+            android:background="@null"
+            android:inputType="text" />
     </LinearLayout>
+
 
     <!-- 📰 RecyclerView Feed -->
     <androidx.recyclerview.widget.RecyclerView
@@ -51,7 +87,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@color/white"
-        app:layout_constraintTop_toBottomOf="@id/topBar"
+        app:layout_constraintTop_toBottomOf="@id/searchBar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
