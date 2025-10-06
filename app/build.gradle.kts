@@ -2,12 +2,13 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("com.google.gms.google-services")
+    id("kotlin-kapt")
 
 }
 
 android {
     namespace = "com.example.buzzboardfinalproject"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.buzzboardfinalproject"
@@ -64,7 +65,7 @@ dependencies {
     implementation(libs.glide)
 
     // OR if you're not using kapt:
-    annotationProcessor(libs.compiler)
+    kapt(libs.compiler)
 
     // Testing
     testImplementation(libs.junit)

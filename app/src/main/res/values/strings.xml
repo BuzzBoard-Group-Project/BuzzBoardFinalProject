@@ -22,8 +22,4 @@
     <string name="favorites_fragment">Favorites Fragment</string>
     <string name="messages_fragment">Messages Fragment</string>
     <string name="profile_fragment">Profile Fragment</string>
-    <string name="post_image">Post image</string>
-    <string name="search">Search</string>
-    <string name="buzzboard">BuzzBoard</string>
-
 </resources>

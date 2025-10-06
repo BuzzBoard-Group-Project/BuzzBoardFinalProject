@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Profile Info Row -->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tvPublisher"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/detail_username"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:paddingStart="8dp"/>
+        </LinearLayout>
+
+        <!-- Post Image -->
+        <ImageView
+            android:id="@+id/imgPostDetail"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="8dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/post_image"/>
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/tvPostTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/detail_post_title"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:paddingTop="8dp"/>
+
+        <!-- Description -->
+        <TextView
+            android:id="@+id/tvPostDetailDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/detail_description"
+            android:textSize="15sp"
+            android:paddingTop="4dp"/>
+
+        <!-- Location -->
+
+        <TextView
+            android:id="@+id/tvLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/detail_location"
+            android:textSize="14sp"
+            android:paddingTop="6dp"/>
+
+        <!-- Time -->
+        <TextView
+            android:id="@+id/tvPostDetailDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/detail_datetime"
+            android:textSize="14sp"
+            android:paddingTop="2dp"/>
+
+        <ImageButton
+            android:id="@+id/imageButton4"
+            android:layout_width="87dp"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/baseline_favorite_border_24" />
+
+
+    </LinearLayout>
+</ScrollView>
+
+
