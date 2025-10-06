@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 
 class PostAdapter2(
     private val context: Context,
@@ -23,25 +24,22 @@ class PostAdapter2(
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = postList[position]
 
-        // ✅ Decode Base64 image string if stored that way
         if (post.postimage.startsWith("http")) {
-            // If you ever switch to Firebase Storage URLs later, you can use Glide here
-            com.bumptech.glide.Glide.with(context).load(post.postimage).into(holder.postImage)
+            Glide.with(context).load(post.postimage).into(holder.postImage)
         } else {
             try {
                 val imageBytes = Base64.decode(post.postimage, Base64.DEFAULT)
                 val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
                 holder.postImage.setImageBitmap(bitmap)
             } catch (e: Exception) {
-                holder.postImage.setImageResource(R.drawable.add_image_icon) // fallback image
+                holder.postImage.setImageResource(R.drawable.add_image_icon)
             }
         }
 
-        // ✅ Bind text fields
         holder.postTitle.text = post.title
         holder.postDescription.text = post.description
         holder.postLocation.text = post.location
-
+        holder.postTime.text = "" // optional: set real time later
     }
 
     override fun getItemCount(): Int = postList.size

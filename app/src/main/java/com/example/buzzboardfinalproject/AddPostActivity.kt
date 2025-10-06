@@ -22,32 +22,20 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import java.io.ByteArrayOutputStream
 
-/**
- * Activity that allows the user to create and upload a new post.
- * The post consists of a title, description, location, time, and an image.
- * Users can pick an image from their gallery.
- * Images are converted to Base64 strings and stored in both Firebase Realtime Database and Firestore.
- */
 class AddPostActivity : AppCompatActivity() {
 
-    // View binding for accessing UI elements
     private lateinit var binding: ActivityAddPostBinding
-
-    // URI of the selected image
     private var imageUri: Uri? = null
-
-    // Activity Result Launcher for picking images from gallery
     private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge() // Modern UI layout
+        enableEdgeToEdge()
 
-        // Inflate layout using view binding
         binding = ActivityAddPostBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Initialize the ActivityResultLauncher
+        // ✅ Image picker setup
         activityResultLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result: ActivityResult ->
@@ -55,7 +43,7 @@ class AddPostActivity : AppCompatActivity() {
                 val data = result.data
                 imageUri = data?.data
                 if (imageUri != null) {
-                    binding.imagePost.setImageURI(imageUri) // Assume your layout has postImageView
+                    binding.imagePost.setImageURI(imageUri)
                 } else {
                     Toast.makeText(this, "No Image Selected", Toast.LENGTH_SHORT).show()
                 }
@@ -64,40 +52,49 @@ class AddPostActivity : AppCompatActivity() {
             }
         }
 
-        // Set click listener for selecting image
         binding.imagePost.setOnClickListener {
             val photoPicker = Intent(Intent.ACTION_GET_CONTENT)
             photoPicker.type = "image/*"
             activityResultLauncher.launch(photoPicker)
         }
 
-        // Set click listener for Save button
+        // ✅ Save / Post button
         binding.saveNewPostBtn.setOnClickListener {
-            uploadImage()
+            val title = binding.TitlePost.text.toString()
+            val description = binding.descriptionPost.text.toString()
+            val location = binding.LocationPost.text.toString()
+            val time = binding.TimePost.text.toString()
+
+            if (title.isEmpty() || description.isEmpty()) {
+                Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // 👉 Go to confirmation page
+            val intent = Intent(this, ConfirmPostActivity::class.java)
+            intent.putExtra("title", title)
+            intent.putExtra("description", description)
+            intent.putExtra("location", location)
+            intent.putExtra("time", time)
+            intent.putExtra("imageUri", imageUri.toString())
+            startActivity(intent)
         }
 
-        // Set click listener for Close button
+        // ✅ Close button
         binding.closeAddPostBtn.setOnClickListener {
             finish()
         }
     }
 
-    /**
-     * Uploads the selected image along with post details to Firebase.
-     * - Converts image to Base64 string.
-     * - Generates a unique post ID.
-     * - Saves the post in both Realtime Database and Firestore.
-     */
     private fun uploadImage() {
         when {
-            imageUri == null -> Toast.makeText(
-                this,
-                "Please select image first.",
-                Toast.LENGTH_LONG
-            ).show()
+            imageUri == null -> {
+                Toast.makeText(this, "Please select image first.", Toast.LENGTH_LONG).show()
+            }
 
-            TextUtils.isEmpty(binding.descriptionPost.text.toString()) ->
+            TextUtils.isEmpty(binding.descriptionPost.text.toString()) -> {
                 Toast.makeText(this, "Please write caption.", Toast.LENGTH_LONG).show()
+            }
 
             else -> {
                 val progressDialog = ProgressDialog(this)
@@ -117,7 +114,6 @@ class AddPostActivity : AppCompatActivity() {
                     val firestore = FirebaseFirestore.getInstance()
                     val postId = ref.push().key!!
 
-                    // Prepare post data
                     val postMap = HashMap<String, Any>()
                     postMap["postid"] = postId
                     postMap["description"] = binding.descriptionPost.text.toString().lowercase()
@@ -127,10 +123,7 @@ class AddPostActivity : AppCompatActivity() {
                     postMap["location"] = binding.LocationPost.text.toString()
                     postMap["time"] = binding.TimePost.text.toString()
 
-                    // Save post to Firebase Realtime Database
                     ref.child(postId).updateChildren(postMap)
-
-                    // Save post to Firestore
                     firestore.collection("Posts").document(postId).set(postMap)
 
                     Toast.makeText(this, "Post uploaded successfully.", Toast.LENGTH_LONG).show()
@@ -146,9 +139,6 @@ class AddPostActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * Utility function to get the file extension from a Uri
-     */
     private fun getFileExtension(fileUri: Uri): String? {
         val contentResolver: ContentResolver = contentResolver
         val mime = MimeTypeMap.getSingleton()

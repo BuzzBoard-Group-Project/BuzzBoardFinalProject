@@ -12,6 +12,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BuzzBoardFinalProject"
         tools:targetApi="31">
+        <activity android:name=".ConfirmPostActivity" />
+
         <activity
             android:name=".AddPostActivity"
             android:exported="false" />
