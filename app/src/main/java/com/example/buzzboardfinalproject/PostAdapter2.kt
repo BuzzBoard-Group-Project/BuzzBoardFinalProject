@@ -12,7 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 
 class PostAdapter2(
     private val context: Context,
-    private val postList: ArrayList<Post>
+    private val postList: ArrayList<Post>,
+    private val onItemClick: (Post) -> Unit
 ) : RecyclerView.Adapter<PostAdapter2.PostViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
@@ -22,7 +23,9 @@ class PostAdapter2(
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = postList[position]
-
+        holder.itemView.setOnClickListener {
+           onItemClick(post)
+        }
         // ✅ Decode Base64 image string if stored that way
         if (post.postimage.startsWith("http")) {
             // If you ever switch to Firebase Storage URLs later, you can use Glide here

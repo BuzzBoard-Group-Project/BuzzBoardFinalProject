@@ -10,3 +10,4 @@ data class Post(
     val time: String =""
 
 )
+        

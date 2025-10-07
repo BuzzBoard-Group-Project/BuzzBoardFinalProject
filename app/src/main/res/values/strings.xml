@@ -22,4 +22,12 @@
     <string name="favorites_fragment">Favorites Fragment</string>
     <string name="messages_fragment">Messages Fragment</string>
     <string name="profile_fragment">Profile Fragment</string>
+    <string name="post_image">Post Image</string>
+    <string name="detail_username">Username</string>
+    <string name="detail_post_title">Post Title</string>
+    <string name="detail_description">Description</string>
+    <string name="detail_location">Location</string>
+    <string name="detail_datetime">Date/Time</string>
+    <string name="buzzboard">BuzzBoard</string>
+    <string name="search">Search</string>
 </resources>

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.content.Intent
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.buzzboardfinalproject.databinding.FragmentHomeBinding
@@ -28,7 +29,11 @@ class HomeFragment : Fragment() {
         // ✅ Set up Firebase and RecyclerView
         databaseRef = FirebaseDatabase.getInstance().getReference("Posts")
         postList = ArrayList()
-        adapter = PostAdapter2(requireContext(), postList)
+        adapter = PostAdapter2(requireContext(), postList) { selectedPost ->
+            val intent = Intent(requireContext(), PostDetailActivity::class.java)
+            intent.putExtra("post.id", selectedPost.postid)
+            startActivity(intent)
+        }
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
 
