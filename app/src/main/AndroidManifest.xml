@@ -41,6 +41,9 @@
             android:name=".PostDetailActivity"
             android:exported="false"
             android:label="Post Details" />
+
+        <activity android:name=".EditProfileActivity" />
+
     </application>
 
 </manifest>

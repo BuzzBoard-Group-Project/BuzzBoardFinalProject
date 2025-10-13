@@ -1,5 +1,6 @@
 package com.example.buzzboardfinalproject
 
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Base64
@@ -7,7 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.buzzboardfinalproject.databinding.FragmentProfileBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
@@ -16,7 +17,8 @@ class ProfileFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
-    private lateinit var databaseRef: DatabaseReference
+    private lateinit var postsRef: DatabaseReference
+    private lateinit var usersRef: DatabaseReference
     private lateinit var userPosts: ArrayList<Post>
     private lateinit var adapter: PostAdapter2
 
@@ -28,27 +30,57 @@ class ProfileFragment : Fragment() {
         val view = binding.root
 
         val currentUser = FirebaseAuth.getInstance().currentUser
-        databaseRef = FirebaseDatabase.getInstance().getReference("Posts")
+        val userId = currentUser?.uid ?: return view
 
-        // Set dummy data for now
-        binding.tvProfileName.text = currentUser?.email ?: "BuzzBoard User"
-        binding.tvBio.text = "VSU Student | AbstraKt 🐝"
+        postsRef = FirebaseDatabase.getInstance().getReference("Posts")
+        usersRef = FirebaseDatabase.getInstance().getReference("Users").child(userId)
 
-        // Decode Base64 profile image if you have one stored later
-        // binding.imgProfilePicture.setImageBitmap(decodedImage)
+        // ✅ Load and display the user's info
+        loadUserProfile()
 
-        // Load user posts
+        // ✅ Edit profile button
+        binding.btnEditProfile.setOnClickListener {
+            startActivity(Intent(requireContext(), EditProfileActivity::class.java))
+        }
+
+        // ✅ Load user's posts
         userPosts = ArrayList()
         adapter = PostAdapter2(requireContext(), userPosts)
-        binding.recyclerUserPosts.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerUserPosts.layoutManager = GridLayoutManager(requireContext(), 3)
         binding.recyclerUserPosts.adapter = adapter
 
-        fetchUserPosts(currentUser?.uid ?: "")
+        fetchUserPosts(userId)
         return view
     }
 
+    private fun loadUserProfile() {
+        usersRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val name = snapshot.child("name").getValue(String::class.java)
+                val bio = snapshot.child("bio").getValue(String::class.java)
+                val profileImage = snapshot.child("profileImage").getValue(String::class.java)
+
+                binding.tvProfileName.text = name ?: "BuzzBoard User"
+                binding.tvBio.text = bio ?: "VSU Student | AbstraKt 🐝"
+
+                // ✅ Decode Base64 image
+                if (!profileImage.isNullOrEmpty()) {
+                    try {
+                        val imageBytes = Base64.decode(profileImage, Base64.DEFAULT)
+                        val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                        binding.imgProfilePicture.setImageBitmap(bitmap)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
+
     private fun fetchUserPosts(userId: String) {
-        databaseRef.orderByChild("publisher").equalTo(userId)
+        postsRef.orderByChild("publisher").equalTo(userId)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     userPosts.clear()
