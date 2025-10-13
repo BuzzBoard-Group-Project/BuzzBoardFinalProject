@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+
+    <!-- 🩶 Background color -->
+    <solid android:color="@color/grey" />
+
+    <!-- 🟡 Optional: Yellow outline around the circle -->
+    <stroke
+        android:width="2dp"
+        android:color="@color/yellow" />
+
+    <!-- 🪶 Smooth edges -->
+    <size
+        android:width="100dp"
+        android:height="100dp" />
+</shape>

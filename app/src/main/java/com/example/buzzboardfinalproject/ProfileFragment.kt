@@ -1,59 +1,71 @@
 package com.example.buzzboardfinalproject
 
+import android.graphics.BitmapFactory
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.buzzboardfinalproject.databinding.FragmentProfileBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [ProfileFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ProfileFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private var _binding: FragmentProfileBinding? = null
+    private val binding get() = _binding!!
+    private lateinit var databaseRef: DatabaseReference
+    private lateinit var userPosts: ArrayList<Post>
+    private lateinit var adapter: PostAdapter2
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false)
+    ): View {
+        _binding = FragmentProfileBinding.inflate(inflater, container, false)
+        val view = binding.root
+
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        databaseRef = FirebaseDatabase.getInstance().getReference("Posts")
+
+        // Set dummy data for now
+        binding.tvProfileName.text = currentUser?.email ?: "BuzzBoard User"
+        binding.tvBio.text = "VSU Student | AbstraKt 🐝"
+
+        // Decode Base64 profile image if you have one stored later
+        // binding.imgProfilePicture.setImageBitmap(decodedImage)
+
+        // Load user posts
+        userPosts = ArrayList()
+        adapter = PostAdapter2(requireContext(), userPosts)
+        binding.recyclerUserPosts.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerUserPosts.adapter = adapter
+
+        fetchUserPosts(currentUser?.uid ?: "")
+        return view
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ProfileFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ProfileFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    private fun fetchUserPosts(userId: String) {
+        databaseRef.orderByChild("publisher").equalTo(userId)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    userPosts.clear()
+                    for (dataSnap in snapshot.children) {
+                        val post = dataSnap.getValue(Post::class.java)
+                        if (post != null) userPosts.add(post)
+                    }
+                    binding.tvPostCount.text = userPosts.size.toString()
+                    adapter.notifyDataSetChanged()
                 }
-            }
+
+                override fun onCancelled(error: DatabaseError) {}
+            })
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
