@@ -1,8 +1,9 @@
 package com.example.buzzboardfinalproject
 
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Base64
 import androidx.appcompat.app.AppCompatActivity
-import com.bumptech.glide.Glide
 import com.example.buzzboardfinalproject.databinding.ActivityPostDetailBinding
 import com.google.firebase.database.FirebaseDatabase
 
@@ -13,30 +14,48 @@ class PostDetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Inflate the activity layout using Activity binding
+        // Inflate layout with ViewBinding
         binding = ActivityPostDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Get the post ID from the intent
+        binding.btnBack.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+
+
+        // ✅ Get the post ID from the intent
         val postId = intent.getStringExtra("post_id") ?: return
 
-        // Reference the specific post in Firebase
+        // ✅ Reference the specific post in Firebase
         val databaseRef = FirebaseDatabase.getInstance().getReference("Posts").child(postId)
 
-        // Fetch the post data
+        // ✅ Fetch the post data
         databaseRef.get().addOnSuccessListener { snapshot ->
             val post = snapshot.getValue(Post::class.java)
             if (post != null) {
-                // Bind post data to views
-                binding.tvPublisher.text = post.publisher
+                // 📝 Bind post data to views
                 binding.tvPostTitle.text = post.title
                 binding.tvPostDetailDescription.text = post.description
                 binding.tvLocation.text = post.location
                 binding.tvPostDetailDate.text = post.time
-                Glide.with(this).load(post.postimage).into(binding.imgPostDetail)
+
+                // 🖼️ Decode Base64 → Bitmap and display image
+                if (!post.postimage.isNullOrEmpty()) {
+                    try {
+                        val imageBytes = Base64.decode(post.postimage, Base64.DEFAULT)
+                        val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                        binding.imgPostDetail.setImageBitmap(bitmap)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        binding.imgPostDetail.setImageResource(R.drawable.add_image_icon)
+                    }
+                } else {
+                    binding.imgPostDetail.setImageResource(R.drawable.add_image_icon)
+                }
             }
         }.addOnFailureListener {
-            // Handle any errors here
+            // ❌ Handle any errors (optional)
+            it.printStackTrace()
         }
     }
 }

@@ -54,7 +54,6 @@ class HomeFragment : Fragment() {
                     println("👉 Post data: ${dataSnap.value}")
                 }
 
-                // Normal loop to fill list
                 for (dataSnap in snapshot.children) {
                     val post = dataSnap.getValue(Post::class.java)
                     if (post != null) {
@@ -62,7 +61,11 @@ class HomeFragment : Fragment() {
                     }
                 }
 
+// ✅ Reverse the list so newest posts come first
+                postList.reverse()
+
                 adapter.notifyDataSetChanged()
+
             }
 
             override fun onCancelled(error: DatabaseError) {

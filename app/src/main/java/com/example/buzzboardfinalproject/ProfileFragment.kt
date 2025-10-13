@@ -1,59 +1,103 @@
 package com.example.buzzboardfinalproject
 
+import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
+import com.example.buzzboardfinalproject.databinding.FragmentProfileBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [ProfileFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ProfileFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private var _binding: FragmentProfileBinding? = null
+    private val binding get() = _binding!!
+    private lateinit var postsRef: DatabaseReference
+    private lateinit var usersRef: DatabaseReference
+    private lateinit var userPosts: ArrayList<Post>
+    private lateinit var adapter: PostAdapter2
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false)
+    ): View {
+        _binding = FragmentProfileBinding.inflate(inflater, container, false)
+        val view = binding.root
+
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        val userId = currentUser?.uid ?: return view
+
+        postsRef = FirebaseDatabase.getInstance().getReference("Posts")
+        usersRef = FirebaseDatabase.getInstance().getReference("Users").child(userId)
+
+        // ✅ Load and display the user's info
+        loadUserProfile()
+
+        // ✅ Edit profile button
+        binding.btnEditProfile.setOnClickListener {
+            startActivity(Intent(requireContext(), EditProfileActivity::class.java))
+        }
+
+        // ✅ Load user's posts
+        userPosts = ArrayList()
+        adapter = PostAdapter2(requireContext(), userPosts)
+        binding.recyclerUserPosts.layoutManager = GridLayoutManager(requireContext(), 3)
+        binding.recyclerUserPosts.adapter = adapter
+
+        fetchUserPosts(userId)
+        return view
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ProfileFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ProfileFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    private fun loadUserProfile() {
+        usersRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val name = snapshot.child("name").getValue(String::class.java)
+                val bio = snapshot.child("bio").getValue(String::class.java)
+                val profileImage = snapshot.child("profileImage").getValue(String::class.java)
+
+                binding.tvProfileName.text = name ?: "BuzzBoard User"
+                binding.tvBio.text = bio ?: "VSU Student | AbstraKt 🐝"
+
+                // ✅ Decode Base64 image
+                if (!profileImage.isNullOrEmpty()) {
+                    try {
+                        val imageBytes = Base64.decode(profileImage, Base64.DEFAULT)
+                        val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                        binding.imgProfilePicture.setImageBitmap(bitmap)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                 }
             }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
+
+    private fun fetchUserPosts(userId: String) {
+        postsRef.orderByChild("publisher").equalTo(userId)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    userPosts.clear()
+                    for (dataSnap in snapshot.children) {
+                        val post = dataSnap.getValue(Post::class.java)
+                        if (post != null) userPosts.add(post)
+                    }
+                    binding.tvPostCount.text = userPosts.size.toString()
+                    adapter.notifyDataSetChanged()
+                }
+
+                override fun onCancelled(error: DatabaseError) {}
+            })
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

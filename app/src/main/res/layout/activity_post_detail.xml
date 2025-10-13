@@ -2,86 +2,107 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:padding="16dp">
 
+    <!-- ✅ Single child: LinearLayout container -->
     <LinearLayout
-        android:orientation="vertical"
-        android:padding="16dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <!-- Profile Info Row -->
+        <!-- 👤 Publisher Row -->
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:gravity="center_vertical">
 
-            <TextView
-                android:id="@+id/tvPublisher"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/detail_username"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:paddingStart="8dp"/>
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                app:srcCompat="@drawable/ic_arrow_back"
+                app:tint="@color/black"
+                android:contentDescription="Back" />
+
+
         </LinearLayout>
 
-        <!-- Post Image -->
+        <!-- 🖼 Post Image -->
         <ImageView
             android:id="@+id/imgPostDetail"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginTop="8dp"
+            android:layout_height="250dp"
+            android:layout_marginTop="12dp"
             android:scaleType="centerCrop"
-            android:contentDescription="@string/post_image"/>
+            android:background="@color/grey"
+            android:contentDescription="@string/post_image" />
 
-        <!-- Title -->
+        <!-- ❤️ Favorite Button Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:layout_marginTop="8dp">
+
+            <ImageButton
+                android:id="@+id/btnFavorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="48dp"
+                android:minHeight="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/add_to_favorites"
+                android:padding="8dp"
+                app:srcCompat="@drawable/baseline_favorite_border_24"
+                app:tint="@color/black" />
+        </LinearLayout>
+
+        <!-- 📝 Title -->
         <TextView
             android:id="@+id/tvPostTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:text="@string/detail_post_title"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:paddingTop="8dp"/>
+            android:textColor="@color/black" />
 
-        <!-- Description -->
+        <!-- 📝 Description -->
         <TextView
             android:id="@+id/tvPostDetailDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:text="@string/detail_description"
             android:textSize="15sp"
-            android:paddingTop="4dp"/>
+            android:textColor="@color/grey" />
 
-        <!-- Location -->
-
+        <!-- 📍 Location -->
         <TextView
             android:id="@+id/tvLocation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:text="@string/detail_location"
             android:textSize="14sp"
-            android:paddingTop="6dp"/>
+            android:textColor="@color/black" />
 
-        <!-- Time -->
+        <!-- ⏰ Date & Time -->
         <TextView
             android:id="@+id/tvPostDetailDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             android:text="@string/detail_datetime"
             android:textSize="14sp"
-            android:paddingTop="2dp"/>
-
-        <ImageButton
-            android:id="@+id/imageButton4"
-            android:layout_width="87dp"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/baseline_favorite_border_24" />
-
+            android:textColor="@color/grey" />
 
     </LinearLayout>
 </ScrollView>
-
-
