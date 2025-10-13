@@ -28,7 +28,7 @@ class PostDetailActivity : AppCompatActivity() {
             val post = snapshot.getValue(Post::class.java)
             if (post != null) {
                 // Bind post data to views
-                binding.tvPublisher.text = post.publisher
+
                 binding.tvPostTitle.text = post.title
                 binding.tvPostDetailDescription.text = post.description
                 binding.tvLocation.text = post.location
