@@ -18,6 +18,11 @@ class PostDetailActivity : AppCompatActivity() {
         binding = ActivityPostDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.btnBack.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+
+
         // ✅ Get the post ID from the intent
         val postId = intent.getStringExtra("post_id") ?: return
 
