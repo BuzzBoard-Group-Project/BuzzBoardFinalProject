@@ -7,7 +7,8 @@ data class Post(
     val location: String = "",
     val postimage: String = "",
     val publisher: String = "",
-    val time: String =""
+    val time: String ="",
+    val isFavorite: Boolean = false
 
 )
         

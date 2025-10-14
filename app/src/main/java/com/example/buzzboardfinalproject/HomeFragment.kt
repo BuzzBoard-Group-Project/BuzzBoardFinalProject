@@ -29,11 +29,7 @@ class HomeFragment : Fragment() {
         // ✅ Set up Firebase and RecyclerView
         databaseRef = FirebaseDatabase.getInstance().getReference("Posts")
         postList = ArrayList()
-        adapter = PostAdapter2(requireContext(), postList) { selectedPost ->
-            val intent = Intent(requireContext(), PostDetailActivity::class.java)
-            intent.putExtra("post.id", selectedPost.postid)
-            startActivity(intent)
-        }
+        adapter = PostAdapter2(requireContext(), postList)
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
 

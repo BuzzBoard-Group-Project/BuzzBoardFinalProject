@@ -30,6 +30,7 @@
     <string name="detail_datetime">Date &amp; Time</string>
     <string name="buzzboard">BuzzBoard</string>
     <string name="search">Search</string>
+    <string name="profile_picture">Profile picture</string>
 
 
 </resources>
