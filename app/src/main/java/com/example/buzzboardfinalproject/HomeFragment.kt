@@ -29,9 +29,22 @@ class HomeFragment : Fragment() {
         // ✅ Set up Firebase and RecyclerView
         databaseRef = FirebaseDatabase.getInstance().getReference("Posts")
         postList = ArrayList()
-        adapter = PostAdapter2(requireContext(), postList)
+        adapter = PostAdapter2(
+            requireContext(),
+            postList,
+            onItemClick = { selectedPost ->
+                val intent = Intent(requireContext(), PostDetailActivity::class.java)
+                intent.putExtra("post_id", selectedPost.postid)
+                startActivity(intent)
+            },
+            onFavoriteClick = { favoritedPost ->
+                favoritedPost.isFavorite = !favoritedPost.isFavorite
+                adapter.notifyDataSetChanged()
+            }
+        )
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
+
 
         fetchPostsFromFirebase()
 

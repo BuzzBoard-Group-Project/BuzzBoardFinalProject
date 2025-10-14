@@ -1,5 +1,6 @@
 package com.example.buzzboardfinalproject
 
+import android.widget.ImageButton
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
@@ -14,7 +15,9 @@ import com.bumptech.glide.Glide
 
 class PostAdapter2(
     private val context: Context,
-    private val postList: ArrayList<Post>
+    private val postList: ArrayList<Post>,
+    private val onItemClick: (Post) -> Unit,
+    private val onFavoriteClick: (Post) -> Unit
 ) : RecyclerView.Adapter<PostAdapter2.PostViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
@@ -41,12 +44,24 @@ class PostAdapter2(
                 holder.postImage.setImageResource(R.drawable.add_image_icon)
             }
         }
+        // Set the heart icon based on Favorite status
+        val iconRes = if (post.isFavorite) {
+            R.drawable.baseline_favorite_24
+        } else {
+            R.drawable.baseline_favorite_border_24
+        }
+        holder.btnFavorite.setImageResource(iconRes)
 
         // ✅ On click → open PostDetailActivity with post_id
         holder.itemView.setOnClickListener {
-            val intent = Intent(context, PostDetailActivity::class.java)
-            intent.putExtra("post_id", post.postid)
-            context.startActivity(intent)
+            onItemClick(post)
+        }
+
+        // Toggle favorite (filled-heart) when heart outline is clicked
+        holder.btnFavorite.setOnClickListener {
+            post.isFavorite = !post.isFavorite
+            notifyItemChanged(position)
+            onFavoriteClick(post)
         }
     }
 
@@ -57,5 +72,6 @@ class PostAdapter2(
         val postTitle: TextView = itemView.findViewById(R.id.recyclerTitle)
         val postDescription: TextView = itemView.findViewById(R.id.recyclerCaption)
         val postLocation: TextView = itemView.findViewById(R.id.recyclerLocation)
+        val btnFavorite: ImageButton = itemView.findViewById(R.id.btnFavorite)
     }
 }
