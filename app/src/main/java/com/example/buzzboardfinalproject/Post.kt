@@ -9,6 +9,5 @@ data class Post(
     val publisher: String = "",
     val time: String ="",
     var isFavorite: Boolean = false
-
 )
         
