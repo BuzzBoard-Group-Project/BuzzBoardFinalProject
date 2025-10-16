@@ -48,21 +48,9 @@ class ProfileFragment : Fragment() {
         adapter = PostAdapter2(
             requireContext(),
             userPosts,
-            onItemClick = { selectedPost ->
-                // Open detailed view when a post is clicked
-                val intent = Intent(requireContext(), PostDetailActivity::class.java)
-                intent.putExtra("title", selectedPost.title)
-                intent.putExtra("description", selectedPost.description)
-                intent.putExtra("image", selectedPost.postimage)
-                startActivity(intent)
-            },
-            onFavoriteClick = { favoritedPost ->
-                // Toggle favorite state
-                favoritedPost.isFavorite = !favoritedPost.isFavorite
-                adapter.notifyDataSetChanged()
-            }
-        )
 
+        )
+// deleted
         binding.recyclerUserPosts.layoutManager = GridLayoutManager(requireContext(), 3)
         binding.recyclerUserPosts.adapter = adapter
 
