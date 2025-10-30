@@ -70,7 +70,7 @@
         android:backgroundTint="#FFD600"
         app:cardCornerRadius="8dp"
         app:cardElevation="4dp"
-        app:layout_constraintBottom_toTopOf="@id/reminderPostCard"
+        app:layout_constraintBottom_toTopOf="@id/CameraPostCard"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.25"
         app:layout_constraintStart_toStartOf="parent"
@@ -101,7 +101,7 @@
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/reminderPostCard"
+        android:id="@+id/CameraPostCard"
         android:layout_width="375dp"
         android:layout_height="122dp"
         android:layout_marginVertical="8dp"
@@ -115,7 +115,7 @@
         app:layout_constraintTop_toBottomOf="@id/pollPostCard">
 
         <LinearLayout
-            android:id="@+id/postReminderOption"
+            android:id="@+id/CameraOption"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#FFD600"
@@ -132,7 +132,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
-                android:text="Reminder"
+                android:text="Camera"
                 android:textColor="#000000"
                 android:textSize="18sp" />
         </LinearLayout>
