@@ -24,6 +24,8 @@
 
         <activity android:name=".EventChatActivity" />
 
+        <activity android:name=".CameraActivity" />
+
         <activity
             android:name=".AddPostActivity"
             android:exported="false" />
