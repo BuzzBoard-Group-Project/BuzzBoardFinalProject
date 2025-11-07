@@ -11,7 +11,8 @@ material = "1.12.0"
 activity = "1.8.0"
 constraintlayout = "2.2.1"
 navigation = "2.7.7"
-firebaseBom = "33.0.0" # ✅ latest BoM, manages all versions automatically
+firebaseBom = "33.0.0"
+swiperefreshlayout = "1.1.0" # ✅ latest BoM, manages all versions automatically
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -44,6 +45,7 @@ androidx-activity = { group = "androidx.activity", name = "activity", version.re
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 androidx-navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigation" }
 androidx-navigation-ui = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation" }
+androidx-swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

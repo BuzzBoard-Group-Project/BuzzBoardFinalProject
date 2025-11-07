@@ -72,6 +72,7 @@ dependencies {
 
     // Glide (image loading)
     implementation(libs.glide)
+    implementation(libs.androidx.swiperefreshlayout)
 
     // OR if you're not using kapt:
     kapt(libs.compiler)
