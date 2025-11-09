@@ -28,7 +28,7 @@ class AddPostFragment : Fragment() {
 
         // You can set up poll and reminder to go to their own activities too
         pollOption.setOnClickListener {
-            val intent = Intent(requireContext(), PostPollFragment::class.java)
+            val intent = Intent(requireContext(), AddPollActivity::class.java)
             startActivity(intent)
         }
 

@@ -1,62 +1,67 @@
 package com.example.buzzboardfinalproject
 
+import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.fragment.app.Fragment
-import com.example.buzzboardfinalproject.databinding.FragmentPostPollBinding
+import androidx.appcompat.app.AppCompatActivity
 
-class PostPollFragment : Fragment() {
+class AddPollActivity : AppCompatActivity() {
 
-    private var _binding: FragmentPostPollBinding? = null
-    private val binding get() = _binding!!
-
+    private lateinit var questionEditText: EditText
+    private lateinit var optionsContainer: LinearLayout
     private val optionViews = mutableListOf<EditText>()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentPostPollBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        // Reuse your existing XML (fragment_post_poll.xml)
+        // IDs must match: toolbar, addOptionButton, submitPollButton, questionEditText, optionsContainer
+        setContentView(R.layout.fragment_post_poll)
 
-        // Back button
-        binding.toolbar.setNavigationOnClickListener {
-            parentFragmentManager.popBackStack()
-        }
+        // Views
+        val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar)
+        val addOptionButton: android.view.View = findViewById(R.id.addOptionButton)
+        val submitPollButton: android.view.View = findViewById(R.id.submitPollButton)
+        questionEditText = findViewById(R.id.questionEditText)
+        optionsContainer = findViewById(R.id.optionsContainer)
 
-        // Add option button
-        binding.addOptionButton.setOnClickListener {
-            addPollOption()
-        }
+        // Back
+        toolbar.setNavigationOnClickListener { finish() }
 
-        // Submit poll button
-        binding.submitPollButton.setOnClickListener {
-            val question = binding.questionEditText.text.toString().trim()
+        // Add option
+        addOptionButton.setOnClickListener { addPollOption() }
+
+        // Submit poll -> go to ConfirmPollActivity with extras
+        submitPollButton.setOnClickListener {
+            val question = questionEditText.text.toString().trim()
             val options = optionViews.map { it.text.toString().trim() }.filter { it.isNotEmpty() }
 
             if (question.isEmpty()) {
-                Toast.makeText(requireContext(), "Please enter a question", Toast.LENGTH_SHORT).show()
-            } else if (options.size < 2) {
-                Toast.makeText(requireContext(), "Enter at least two options", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(requireContext(), "Poll submitted!", Toast.LENGTH_SHORT).show()
-                // Implement poll submission logic here
+                Toast.makeText(this, "Enter a question", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
+            if (options.size < 2) {
+                Toast.makeText(this, "Enter at least two options", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val intent = Intent(this, ConfirmPollActivity::class.java).apply {
+                putExtra("question", question)
+                putStringArrayListExtra("options", ArrayList(options))
+                // add imageUri if you add image picking later: putExtra("imageUri", uriString)
+            }
+            startActivity(intent)
         }
 
-        // Add initial two options
+        // Start with two options
         repeat(2) { addPollOption() }
     }
 
     private fun addPollOption() {
-        val optionEditText = EditText(requireContext()).apply {
+        val optionEditText = EditText(this).apply {
             layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
@@ -67,13 +72,7 @@ class PostPollFragment : Fragment() {
             setTextColor(resources.getColor(android.R.color.black))
             setBackgroundResource(android.R.drawable.edit_text)
         }
-
-        binding.optionsContainer.addView(optionEditText)
+        optionsContainer.addView(optionEditText)
         optionViews.add(optionEditText)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

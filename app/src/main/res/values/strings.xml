@@ -10,8 +10,10 @@
     <string name="app_profile">Profile</string>
     <string name="app_home">Home</string>
     <string name="app_messages">Messages</string>
+    <string name="poll_status_open">Open</string>
     <string name="username">Username</string>
     <string name="post_title">Post Title</string>
+    <string name="poll_votes">%1$d votes</string>
     <string name="post_description">Post Description</string>
     <string name="post_location">Post Location</string>
     <string name="app_add_post">Add Post</string>
