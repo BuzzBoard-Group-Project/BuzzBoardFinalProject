@@ -19,6 +19,14 @@ compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "compi
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "compiler" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 
+google-guava = { module = "com.google.guava:guava", version = "32.0.1-android" }
+
+# CameraX dependencies
+androidx-camera-core = { module = "androidx.camera:camera-core", version = "1.5.1" }
+androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version = "1.5.1" }
+androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version = "1.5.1" }
+androidx-camera-view = { module = "androidx.camera:camera-view", version = "1.5.1" }
+
 # Firebase BoM
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 

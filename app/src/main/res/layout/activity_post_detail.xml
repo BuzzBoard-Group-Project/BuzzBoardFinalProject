@@ -104,5 +104,16 @@
             android:textSize="14sp"
             android:textColor="@color/grey" />
 
+        <Button
+            android:id="@+id/btnRegisterEvent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/register"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/yellow"
+            android:textColor="@color/black"
+            android:textStyle="bold" />
+
+
     </LinearLayout>
 </ScrollView>

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 
 class AddPostFragment : Fragment() {
@@ -18,7 +19,7 @@ class AddPostFragment : Fragment() {
         // Match IDs from the XML
         val pictureOption = view.findViewById<View>(R.id.picturePostCard)
         val pollOption = view.findViewById<View>(R.id.pollPostCard)
-        val reminderOption = view.findViewById<View>(R.id.reminderPostCard)
+        val cameraOption = view.findViewById<View>(R.id.CameraPostCard)
 
         // Launch AddPostActivity when picture option is clicked
         pictureOption.setOnClickListener {
@@ -26,17 +27,17 @@ class AddPostFragment : Fragment() {
             startActivity(intent)
         }
 
-        // You can set up poll and reminder to go to their own activities too
+        // You can set up poll and camera to go to their own activities too
         pollOption.setOnClickListener {
             val intent = Intent(requireContext(), AddPollActivity::class.java)
             startActivity(intent)
         }
 
-        reminderOption.setOnClickListener {
-            val intent = Intent(requireContext(), ReminderFragment::class.java)
-            startActivity(intent)
+        cameraOption.setOnClickListener {
+            startActivity(Intent(requireContext(), CameraActivity::class.java))
         }
 
-        return view
+
+            return view
     }
 }

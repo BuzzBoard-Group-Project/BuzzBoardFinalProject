@@ -34,6 +34,8 @@
     <string name="search">Search</string>
     <string name="profile_picture">Profile picture</string>
     <string name="favorite_button">fav_button</string>
-
+    <string name="close">Close</string>
+    <string name="capture">Capture</string>
+    <string name="register">Register</string>
 
 </resources>

@@ -11,11 +11,18 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 
 class PostAdapter2(
     private val context: Context,
-    private var postList: ArrayList<Post>   // 👈 must be "var", not "val"
+    private var postList: ArrayList<Post>
 ) : RecyclerView.Adapter<PostAdapter2.PostViewHolder>() {
+
+    // Cache to store usernames (so we don’t fetch repeatedly)
+    private val userNameCache = mutableMapOf<String, String>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.recycler_item, parent, false)
@@ -29,7 +36,7 @@ class PostAdapter2(
         holder.postDescription.text = post.description
         holder.postLocation.text = post.location
 
-        // ✅ Load image
+        // ✅ Load image (URL or Base64)
         if (post.postimage.startsWith("http")) {
             Glide.with(context).load(post.postimage).into(holder.postImage)
         } else if (post.postimage.isNotEmpty()) {
@@ -44,7 +51,36 @@ class PostAdapter2(
             holder.postImage.setImageResource(R.drawable.add_image_icon)
         }
 
-        // ✅ Go to details
+        // Fetch and display username
+        holder.postUsername.text = "BuzzBoard User"
+        val publisherId = post.publisher
+        if (!publisherId.isNullOrEmpty()) {
+            val cached = userNameCache[publisherId]
+            if (cached != null) {
+                holder.postUsername.text = cached
+            } else {
+                FirebaseDatabase.getInstance()
+                    .getReference("Users")
+                    .child(publisherId)
+                    .child("name")
+                    .addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            val name = snapshot.getValue(String::class.java) ?: "BuzzBoard User"
+                            userNameCache[publisherId] = name
+
+                            // Use adapterPosition (or absoluteAdapterPosition if your version supports it)
+                            val pos = holder.adapterPosition
+                            if (pos != RecyclerView.NO_POSITION) {
+                                holder.postUsername.text = name
+                            }
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {}
+                    })
+            }
+        }
+
+        // ✅ Open post detail
         holder.itemView.setOnClickListener {
             val intent = Intent(context, PostDetailActivity::class.java)
             intent.putExtra("post_id", post.postid)
@@ -59,9 +95,9 @@ class PostAdapter2(
         val postTitle: TextView = itemView.findViewById(R.id.recyclerTitle)
         val postDescription: TextView = itemView.findViewById(R.id.recyclerCaption)
         val postLocation: TextView = itemView.findViewById(R.id.recyclerLocation)
+        val postUsername: TextView = itemView.findViewById(R.id.recyclerUsername) // 👈 added
     }
 
-    // ✅ Safe update function
     fun updateList(newList: ArrayList<Post>) {
         postList = newList
         notifyDataSetChanged()
