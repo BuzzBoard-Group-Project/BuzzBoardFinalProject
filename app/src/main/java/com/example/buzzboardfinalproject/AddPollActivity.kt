@@ -48,11 +48,7 @@ class AddPollActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val intent = Intent(this, ConfirmPollActivity::class.java).apply {
-                putExtra("question", question)
-                putStringArrayListExtra("options", ArrayList(options))
-                // add imageUri if you add image picking later: putExtra("imageUri", uriString)
-            }
+
             startActivity(intent)
         }
 
