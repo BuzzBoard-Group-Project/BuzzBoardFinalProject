@@ -54,6 +54,13 @@
             android:exported="false"
             android:label="Post Details" />
 
+        <activity
+            android:name=".ConfirmPollActivity"
+            android:exported="false" />
+
+        <activity android:name=".AddPollActivity" android:exported="false" />
+
+
         <activity android:name=".EditProfileActivity" />
 
     </application>

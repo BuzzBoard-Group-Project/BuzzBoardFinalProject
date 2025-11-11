@@ -35,7 +35,7 @@ class AddPostActivity : AppCompatActivity() {
         binding = ActivityAddPostBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Image picker setup
+        // ✅ Image picker setup
         activityResultLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result: ActivityResult ->
@@ -58,7 +58,7 @@ class AddPostActivity : AppCompatActivity() {
             activityResultLauncher.launch(photoPicker)
         }
 
-        // Save / Post button
+        // ✅ Save / Post button
         binding.saveNewPostBtn.setOnClickListener {
             val title = binding.TitlePost.text.toString()
             val description = binding.descriptionPost.text.toString()
@@ -70,7 +70,7 @@ class AddPostActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Go to confirmation page
+            // 👉 Go to confirmation page
             val intent = Intent(this, ConfirmPostActivity::class.java)
             intent.putExtra("title", title)
             intent.putExtra("description", description)
@@ -80,7 +80,7 @@ class AddPostActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // Close button
+        // ✅ Close button
         binding.closeAddPostBtn.setOnClickListener {
             finish()
         }

@@ -74,6 +74,16 @@ dependencies {
     implementation(libs.glide)
     implementation(libs.androidx.swiperefreshlayout)
 
+    dependencies {
+        // existing dependencies above...
+
+        // RecyclerView for ConcatAdapter
+        implementation("androidx.recyclerview:recyclerview:1.3.2")
+
+        // existing dependencies below...
+    }
+
+
     // OR if you're not using kapt:
     kapt(libs.compiler)
 
