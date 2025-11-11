@@ -36,7 +36,7 @@ class PostAdapter2(
         holder.postDescription.text = post.description
         holder.postLocation.text = post.location
 
-        // ✅ Load image (URL or Base64)
+        // Load image (URL or Base64)
         if (post.postimage.startsWith("http")) {
             Glide.with(context).load(post.postimage).into(holder.postImage)
         } else if (post.postimage.isNotEmpty()) {
@@ -80,7 +80,7 @@ class PostAdapter2(
             }
         }
 
-        // ✅ Open post detail
+        // Open post detail
         holder.itemView.setOnClickListener {
             val intent = Intent(context, PostDetailActivity::class.java)
             intent.putExtra("post_id", post.postid)

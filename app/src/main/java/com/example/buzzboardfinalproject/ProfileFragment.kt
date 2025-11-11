@@ -35,15 +35,15 @@ class ProfileFragment : Fragment() {
         postsRef = FirebaseDatabase.getInstance().getReference("Posts")
         usersRef = FirebaseDatabase.getInstance().getReference("Users").child(userId)
 
-        // ✅ Load and display the user's info
+        // Load and display the user's info
         loadUserProfile()
 
-        // ✅ Edit profile button
+        // Edit profile button
         binding.btnEditProfile.setOnClickListener {
             startActivity(Intent(requireContext(), EditProfileActivity::class.java))
         }
 
-        // ✅ Load user's posts
+        // Load user's posts
         userPosts = ArrayList()
         adapter = PostAdapter2(
             requireContext(),
@@ -68,7 +68,7 @@ class ProfileFragment : Fragment() {
                 binding.tvProfileName.text = name ?: "BuzzBoard User"
                 binding.tvBio.text = bio ?: "VSU Student | AbstraKt 🐝"
 
-                // ✅ Decode Base64 image
+                // Decode Base64 image
                 if (!profileImage.isNullOrEmpty()) {
                     try {
                         val imageBytes = Base64.decode(profileImage, Base64.DEFAULT)

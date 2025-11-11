@@ -24,14 +24,14 @@ class ConfirmPostActivity : AppCompatActivity() {
         binding = ActivityConfirmPostBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // ✅ Get data passed from AddPostActivity
+        // Get data passed from AddPostActivity
         val title = intent.getStringExtra("title")
         val description = intent.getStringExtra("description")
         val location = intent.getStringExtra("location")
         val time = intent.getStringExtra("time")
         imageUri = intent.getStringExtra("imageUri")
 
-        // ✅ Fill preview fields
+        // Fill preview fields
         binding.titleText.text = title
         binding.descriptionText.text = description
         binding.locationText.text = location
@@ -45,12 +45,12 @@ class ConfirmPostActivity : AppCompatActivity() {
             }
         }
 
-        // ❌ Cancel → return to AddPostActivity
+        // Cancel → return to AddPostActivity
         binding.editButton.setOnClickListener {
             finish()
         }
 
-        // ✅ Confirm → upload to Firebase and return to main feed
+        // Confirm → upload to Firebase and return to main feed
         binding.confirmButton.setOnClickListener {
             uploadPostToFirebase(title, description, location, time, imageUri)
         }
@@ -94,7 +94,7 @@ class ConfirmPostActivity : AppCompatActivity() {
             ref.child(postId).updateChildren(postMap)
             firestore.collection("Posts").document(postId).set(postMap)
 
-            Toast.makeText(this, "✅ Post uploaded successfully", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, " Post uploaded successfully", Toast.LENGTH_LONG).show()
 
             val intent = Intent(this, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK

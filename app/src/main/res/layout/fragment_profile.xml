@@ -13,7 +13,7 @@
         android:orientation="vertical"
         android:gravity="center_horizontal">
 
-        <!-- 🧍 Profile Image -->
+        <!--  Profile Image -->
         <ImageView
             android:id="@+id/imgProfilePicture"
             android:layout_width="100dp"
@@ -25,7 +25,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginBottom="8dp" />
 
-        <!-- 🧠 Name -->
+        <!--  Name -->
         <TextView
             android:id="@+id/tvProfileName"
             android:layout_width="wrap_content"
@@ -35,7 +35,7 @@
             android:textStyle="bold"
             android:textColor="@color/black" />
 
-        <!-- ✏️ Edit Profile Button -->
+        <!--  Edit Profile Button -->
         <Button
             android:id="@+id/btnEditProfile"
             android:layout_width="wrap_content"
@@ -45,7 +45,7 @@
             android:textColor="@color/black"
             android:backgroundTint="@color/yellow" />
 
-        <!-- 📊 Stats Row -->
+        <!--  Stats Row -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -102,7 +102,7 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- 📝 Bio -->
+        <!--  Bio -->
         <TextView
             android:id="@+id/tvBio"
             android:layout_width="match_parent"
@@ -113,14 +113,14 @@
             android:gravity="center"
             android:layout_marginTop="12dp" />
 
-        <!-- 🔶 Divider -->
+        <!--  Divider -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="16dp"
             android:background="@color/grey" />
 
-        <!-- 🧾 User’s Posts -->
+        <!--  User’s Posts -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -34,72 +34,36 @@ class HomeFragment : Fragment() {
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
 
-        //  main realtime listener
         fetchPostsFromFirebase()
-
-        //  search
-        setupSearchBar()
-
-        //  pull-to-refresh
-        binding.swipeRefresh.setOnRefreshListener {
-            refreshPostsFromFirebase()
-        }
+        setupSearchBar() //  NEW: initialize search functionality
 
         return binding.root
     }
 
-    /**
-     * This one stays as your realtime listener — it listens forever.
-     */
     private fun fetchPostsFromFirebase() {
         databaseRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val tempList = ArrayList<Post>()
+                val tempList = ArrayList<Post>() // local temp list
                 for (dataSnap in snapshot.children) {
                     val post = dataSnap.getValue(Post::class.java)
                     if (post != null) tempList.add(post)
                 }
 
-                // newest first
+                // ✅ Newest first
                 tempList.reverse()
 
+                // ✅ Update adapter safely
                 postList = tempList
                 adapter.updateList(postList)
-
-                // stop spinner if it was from swipe
-                binding.swipeRefresh.isRefreshing = false
             }
 
             override fun onCancelled(error: DatabaseError) {
-                binding.swipeRefresh.isRefreshing = false
                 println("❌ Firebase error: ${error.message}")
             }
         })
     }
 
-
-    private fun refreshPostsFromFirebase() {
-        databaseRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val tempList = ArrayList<Post>()
-                for (dataSnap in snapshot.children) {
-                    val post = dataSnap.getValue(Post::class.java)
-                    if (post != null) tempList.add(post)
-                }
-
-                tempList.reverse()
-                postList = tempList
-                adapter.updateList(postList)
-                binding.swipeRefresh.isRefreshing = false
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                binding.swipeRefresh.isRefreshing = false
-            }
-        })
-    }
-
-    //  search bar logic
+    //  NEW FUNCTION — handles live search + clearing
     private fun setupSearchBar() {
         binding.searchInput.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -108,8 +72,10 @@ class HomeFragment : Fragment() {
                 val query = s.toString().trim()
 
                 if (query.isEmpty()) {
+                    //  If search bar is cleared → show all posts again
                     adapter.updateList(postList)
                 } else {
+                    //  Filter by title, description, or location
                     val filtered = postList.filter {
                         it.title.contains(query, ignoreCase = true) ||
                                 it.description.contains(query, ignoreCase = true) ||

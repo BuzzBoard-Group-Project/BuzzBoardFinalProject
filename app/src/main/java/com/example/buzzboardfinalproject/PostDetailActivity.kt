@@ -29,7 +29,7 @@ class PostDetailActivity : AppCompatActivity() {
         binding = ActivityPostDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // 🔙 back
+        // back
         binding.btnBack.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
@@ -46,12 +46,12 @@ class PostDetailActivity : AppCompatActivity() {
         checkFavoriteStatus()
         checkIfUserRegistered()
 
-        // ❤️ favorites
+        // favorites
         binding.btnFavorite.setOnClickListener {
             toggleFavorite()
         }
 
-        // 📅 register → join chat
+        // register → join chat
         binding.btnRegisterEvent.setOnClickListener {
             toggleRegistration()
         }
