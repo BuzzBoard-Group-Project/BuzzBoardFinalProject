@@ -19,7 +19,7 @@ class AddPollActivity : AppCompatActivity() {
 
         // Reuse your existing XML (fragment_post_poll.xml)
         // IDs must match: toolbar, addOptionButton, submitPollButton, questionEditText, optionsContainer
-        setContentView(R.layout.fragment_post_poll)
+        setContentView(R.layout.activity_add_poll)
 
         // Views
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar)

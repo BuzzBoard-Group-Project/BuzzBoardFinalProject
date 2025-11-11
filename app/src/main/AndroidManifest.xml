@@ -58,6 +58,9 @@
             android:name=".ConfirmPollActivity"
             android:exported="false" />
 
+        <activity android:name=".AddPollActivity" android:exported="false" />
+
+
         <activity android:name=".EditProfileActivity" />
 
     </application>
