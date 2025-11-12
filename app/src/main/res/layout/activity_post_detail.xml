@@ -6,13 +6,13 @@
     android:background="@color/white"
     android:padding="16dp">
 
-    <!-- ✅ Single child: LinearLayout container -->
+    <!-- ✅ Single child -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- 👤 Publisher Row -->
+        <!-- 👤 Top row with back -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -28,8 +28,6 @@
                 app:srcCompat="@drawable/ic_arrow_back"
                 app:tint="@color/black"
                 android:contentDescription="Back" />
-
-
         </LinearLayout>
 
         <!-- 🖼 Post Image -->
@@ -104,6 +102,7 @@
             android:textSize="14sp"
             android:textColor="@color/grey" />
 
+        <!-- ✅ Register button -->
         <Button
             android:id="@+id/btnRegisterEvent"
             android:layout_width="match_parent"
@@ -114,6 +113,52 @@
             android:textColor="@color/black"
             android:textStyle="bold" />
 
+        <!-- 👇 NEW: Comments title -->
+        <TextView
+            android:id="@+id/tvCommentsTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Comments"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/black" />
+
+        <!-- 👇 NEW: comments list -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvComments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:nestedScrollingEnabled="false" />
+
+        <!-- 👇 NEW: add comment row -->
+        <LinearLayout
+            android:id="@+id/commentInputRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <EditText
+                android:id="@+id/etComment"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Add a comment..."
+                android:padding="8dp"
+                android:background="@android:color/transparent" />
+
+            <ImageButton
+                android:id="@+id/btnSendComment"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Send comment"
+                android:padding="6dp"
+                android:src="@android:drawable/ic_menu_send" />
+        </LinearLayout>
 
     </LinearLayout>
 </ScrollView>
