@@ -7,8 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.buzzboardfinalproject.databinding.FragmentHomeBinding
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 
 class HomeFragment : Fragment() {
@@ -20,6 +22,13 @@ class HomeFragment : Fragment() {
     private lateinit var postList: ArrayList<Post>
     private lateinit var adapter: PostAdapter2
 
+    // added: polls
+    private lateinit var pollsRef: DatabaseReference
+    private lateinit var pollAdapter: PollAdapter
+    private var pollsListener: ValueEventListener? = null
+    private var votesListener: ValueEventListener? = null
+    private lateinit var concatAdapter: ConcatAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -27,21 +36,63 @@ class HomeFragment : Fragment() {
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
-        // Firebase
+        // Posts (existing)
         databaseRef = FirebaseDatabase.getInstance().getReference("Posts")
-
-        // list + adapter
         postList = ArrayList()
         adapter = PostAdapter2(requireContext(), postList)
 
-        // recycler
+        // Polls (added)
+        pollsRef = FirebaseDatabase.getInstance().getReference("Polls")
+        pollAdapter = PollAdapter { poll, selectedIndex ->
+            val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return@PollAdapter
+            val db = FirebaseDatabase.getInstance().reference
+
+            // prevent double vote: write user vote only if not set
+            val userVoteRef = db.child("UserPollVotes").child(uid).child(poll.id)
+            userVoteRef.runTransaction(object : Transaction.Handler {
+                override fun doTransaction(currentData: MutableData): Transaction.Result {
+                    if (currentData.getValue(Int::class.java) != null) {
+                        return Transaction.abort()
+                    }
+                    currentData.value = selectedIndex
+                    return Transaction.success(currentData)
+                }
+                override fun onComplete(
+                    error: DatabaseError?,
+                    committed: Boolean,
+                    currentData: DataSnapshot?
+                ) {
+                    if (committed) {
+                        val current = poll.totals.getOrNull(selectedIndex) ?: 0
+                        db.child("Polls")
+                            .child(poll.id)
+                            .child("totals")
+                            .child(selectedIndex.toString())
+                            .setValue(current + 1)
+                    }
+                }
+            })
+        }
+
+        // Combine: polls first, then posts
+        concatAdapter = ConcatAdapter(
+            ConcatAdapter.Config.Builder()
+                .setIsolateViewTypes(true)
+                .build(),
+            pollAdapter,
+            adapter
+        )
+
+        // Recycler
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        binding.recyclerView.adapter = adapter
+        binding.recyclerView.adapter = concatAdapter
 
-        // load data
+        // Load data
         fetchPostsFromFirebase()
+        startPollsListener()
+        startUserVotesListener(FirebaseAuth.getInstance().currentUser?.uid)
 
-        // search
+        // Search
         setupSearchBar()
 
         return binding.root
@@ -55,30 +106,58 @@ class HomeFragment : Fragment() {
                     val post = dataSnap.getValue(Post::class.java)
                     if (post != null) tempList.add(post)
                 }
-
-                // newest first
                 tempList.reverse()
-
-                // update
                 postList = tempList
                 adapter.updateList(postList)
             }
-
             override fun onCancelled(error: DatabaseError) {
                 println("❌ Firebase error: ${error.message}")
             }
         })
     }
 
+    // added: listen to Polls ordered by createdAt
+    private fun startPollsListener() {
+        pollsListener = pollsRef
+            .orderByChild("createdAt")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val polls = snapshot.children.mapNotNull { it.getValue(Poll::class.java) }
+                    pollAdapter.submitList(polls.reversed())
+                }
+                override fun onCancelled(error: DatabaseError) {
+                    // no-op
+                }
+            })
+    }
+
+    // added: reflect user’s vote in the UI
+    private fun startUserVotesListener(uid: String?) {
+        if (uid.isNullOrBlank()) return
+        val ref = FirebaseDatabase.getInstance()
+            .getReference("UserPollVotes")
+            .child(uid)
+        votesListener = ref.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val map = mutableMapOf<String, Int>()
+                for (c in snapshot.children) {
+                    val pollId = c.key ?: continue
+                    val idx = c.getValue(Int::class.java) ?: continue
+                    map[pollId] = idx
+                }
+                // requires PollAdapter.userVotes
+                pollAdapter.userVotes = map
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
+
     private fun setupSearchBar() {
         binding.searchInput.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val query = s.toString().trim()
-
                 if (query.isEmpty()) {
-                    // show all again
                     adapter.updateList(postList)
                 } else {
                     val filtered = postList.filter {
@@ -89,13 +168,25 @@ class HomeFragment : Fragment() {
                     adapter.updateList(ArrayList(filtered))
                 }
             }
-
             override fun afterTextChanged(s: Editable?) {}
         })
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        // remove added listeners
+        pollsListener?.let { pollsRef.removeEventListener(it) }
+        votesListener?.let {
+            val uid = FirebaseAuth.getInstance().currentUser?.uid
+            if (!uid.isNullOrBlank()) {
+                FirebaseDatabase.getInstance()
+                    .getReference("UserPollVotes")
+                    .child(uid)
+                    .removeEventListener(it)
+            }
+        }
+        pollsListener = null
+        votesListener = null
         _binding = null
     }
 }

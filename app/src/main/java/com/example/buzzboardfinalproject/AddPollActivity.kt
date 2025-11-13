@@ -16,25 +16,18 @@ class AddPollActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Reuse your existing XML (fragment_post_poll.xml)
-        // IDs must match: toolbar, addOptionButton, submitPollButton, questionEditText, optionsContainer
         setContentView(R.layout.activity_add_poll)
 
-        // Views
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar)
         val addOptionButton: android.view.View = findViewById(R.id.addOptionButton)
         val submitPollButton: android.view.View = findViewById(R.id.submitPollButton)
         questionEditText = findViewById(R.id.questionEditText)
         optionsContainer = findViewById(R.id.optionsContainer)
 
-        // Back
         toolbar.setNavigationOnClickListener { finish() }
 
-        // Add option
         addOptionButton.setOnClickListener { addPollOption() }
 
-        // Submit poll -> go to ConfirmPollActivity with extras
         submitPollButton.setOnClickListener {
             val question = questionEditText.text.toString().trim()
             val options = optionViews.map { it.text.toString().trim() }.filter { it.isNotEmpty() }
@@ -48,11 +41,14 @@ class AddPollActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-
+            val intent = Intent(this, ConfirmPollActivity::class.java).apply {
+                putExtra("question", question)
+                putStringArrayListExtra("options", ArrayList(options))
+            }
             startActivity(intent)
+            finish()
         }
 
-        // Start with two options
         repeat(2) { addPollOption() }
     }
 
