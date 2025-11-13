@@ -15,6 +15,10 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 class PostAdapter2(
     private val context: Context,
@@ -36,6 +40,14 @@ class PostAdapter2(
         holder.postDescription.text = post.description
         holder.postLocation.text = post.location
 
+        // NEW: show formatted event date if present
+        if (post.eventDateMillis > 0) {
+            holder.postDateTime.visibility = View.VISIBLE
+            holder.postDateTime.text = formatDate(post.eventDateMillis)
+        } else {
+            holder.postDateTime.visibility = View.GONE
+        }
+
         // Load image (URL or Base64)
         if (post.postimage.startsWith("http")) {
             Glide.with(context).load(post.postimage).into(holder.postImage)
@@ -54,7 +66,7 @@ class PostAdapter2(
         // Fetch and display username
         holder.postUsername.text = "BuzzBoard User"
         val publisherId = post.publisher
-        if (!publisherId.isNullOrEmpty()) {
+        if (publisherId.isNotEmpty()) {
             val cached = userNameCache[publisherId]
             if (cached != null) {
                 holder.postUsername.text = cached
@@ -67,14 +79,12 @@ class PostAdapter2(
                         override fun onDataChange(snapshot: DataSnapshot) {
                             val name = snapshot.getValue(String::class.java) ?: "BuzzBoard User"
                             userNameCache[publisherId] = name
-
-                            // Use adapterPosition (or absoluteAdapterPosition if your version supports it)
+                            // update the visible holder safely
                             val pos = holder.adapterPosition
                             if (pos != RecyclerView.NO_POSITION) {
                                 holder.postUsername.text = name
                             }
                         }
-
                         override fun onCancelled(error: DatabaseError) {}
                     })
             }
@@ -95,11 +105,19 @@ class PostAdapter2(
         val postTitle: TextView = itemView.findViewById(R.id.recyclerTitle)
         val postDescription: TextView = itemView.findViewById(R.id.recyclerCaption)
         val postLocation: TextView = itemView.findViewById(R.id.recyclerLocation)
-        val postUsername: TextView = itemView.findViewById(R.id.recyclerUsername) // 👈 added
+        val postUsername: TextView = itemView.findViewById(R.id.recyclerUsername)
+        val postDateTime: TextView = itemView.findViewById(R.id.recyclerDateTime) // 👈 NEW
     }
 
     fun updateList(newList: ArrayList<Post>) {
         postList = newList
         notifyDataSetChanged()
+    }
+
+    private fun formatDate(millis: Long): String {
+        // e.g., "Nov 12, 2025"
+        val sdf = SimpleDateFormat("MMM d, yyyy", Locale.getDefault())
+        sdf.timeZone = TimeZone.getDefault()
+        return sdf.format(Date(millis))
     }
 }

@@ -11,6 +11,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.buzzboardfinalproject.databinding.ActivityPostDetailBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 class PostDetailActivity : AppCompatActivity() {
 
@@ -74,7 +78,14 @@ class PostDetailActivity : AppCompatActivity() {
                 binding.tvPostTitle.text = post.title
                 binding.tvPostDetailDescription.text = post.description
                 binding.tvLocation.text = post.location
-                binding.tvPostDetailDate.text = post.time
+
+                // ✅ Show event date nicely if available
+                if (post.eventDateMillis > 0L) {
+                    binding.tvPostDetailDate.text = formatDateTime(post.eventDateMillis)
+                } else {
+                    // fallback to whatever was previously stored
+                    binding.tvPostDetailDate.text = post.time
+                }
 
                 if (!post.postimage.isNullOrEmpty()) {
                     try {
@@ -101,9 +112,14 @@ class PostDetailActivity : AppCompatActivity() {
                     val c = child.getValue(Comment::class.java)
                     if (c != null) temp.add(c)
                 }
-                // newest at bottom is fine
+                // newest at bottom
                 commentList = temp
                 commentAdapter.updateList(commentList)
+
+                // auto-scroll to latest
+                if (commentList.isNotEmpty()) {
+                    binding.rvComments.scrollToPosition(commentList.size - 1)
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {}
@@ -209,5 +225,14 @@ class PostDetailActivity : AppCompatActivity() {
     private fun updateRegisterButton() {
         binding.btnRegisterEvent.text =
             if (isRegistered) "Registered ✅" else "Register"
+    }
+
+    // ========= UTIL =========
+
+    private fun formatDateTime(millis: Long): String {
+        // Example: "Wed, Nov 12 • 3:30 PM"
+        val sdf = SimpleDateFormat("EEE, MMM d • h:mm a", Locale.getDefault())
+        sdf.timeZone = TimeZone.getDefault()
+        return sdf.format(Date(millis))
     }
 }

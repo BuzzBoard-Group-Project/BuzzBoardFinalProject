@@ -37,5 +37,7 @@
     <string name="close">Close</string>
     <string name="capture">Capture</string>
     <string name="register">Register</string>
+    <string name="location">Location</string>
+    <string name="short_description_of_the_event">Short description of the event...</string>
 
 </resources>

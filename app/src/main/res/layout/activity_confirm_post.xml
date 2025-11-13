@@ -33,17 +33,27 @@
         android:layout_height="wrap_content"
         android:paddingTop="8dp"/>
 
+    <!-- ⭐ NEW: Event Time Preview -->
+    <TextView
+        android:id="@+id/timeText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:textSize="14sp"
+        android:textColor="@android:color/black"
+        android:text="Event time here" />
+
     <Button
         android:id="@+id/confirmButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Post ✅"
+        android:text="Post"
         android:layout_marginTop="20dp"/>
 
     <Button
         android:id="@+id/editButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Edit ✏️"
+        android:text="Edit "
         android:layout_marginTop="10dp"/>
 </LinearLayout>

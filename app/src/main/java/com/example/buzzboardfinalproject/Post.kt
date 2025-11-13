@@ -8,6 +8,10 @@ data class Post(
     val postimage: String = "",
     val publisher: String = "",
     val time: String ="",
-    var isFavorite: Boolean = false
+    var isFavorite: Boolean = false,
+    var username: String = "",
+    var eventDateMillis: Long = 0L,
+
+
 )
         

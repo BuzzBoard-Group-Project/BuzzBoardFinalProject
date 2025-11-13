@@ -103,14 +103,16 @@
             android:textColorHint="@color/black" />
 
         <EditText
-            android:id="@+id/Time_post"
+            android:id="@+id/etEventDate"
             android:layout_width="match_parent"
             android:layout_height="62dp"
-            android:hint="Time:"
-            android:maxLines="2"
+            android:hint="Event Date (tap to pick)"
+            android:focusable="false"
+            android:clickable="true"
             android:textColorHint="@color/black" />
 
 
 
-</LinearLayout>
+
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

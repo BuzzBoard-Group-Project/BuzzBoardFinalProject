@@ -1,91 +1,50 @@
 package com.example.buzzboardfinalproject
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
 import com.example.buzzboardfinalproject.databinding.FragmentFavoritesBinding
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
+import java.util.Calendar
 
 class FavoritesFragment : Fragment() {
 
     private var _binding: FragmentFavoritesBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var databaseRef: DatabaseReference
-    private lateinit var favoritesRef: DatabaseReference
-    private lateinit var favoritePosts: ArrayList<Post>
-    private lateinit var adapter: PostAdapter2
-
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
 
-        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return binding.root
+        // Default calendar date = today
+        val cal = Calendar.getInstance()
+        binding.calendarView.date = cal.timeInMillis
 
-        databaseRef = FirebaseDatabase.getInstance().getReference("Posts")
-        favoritesRef = FirebaseDatabase.getInstance().getReference("Favorites").child(currentUserId)
-        favoritePosts = ArrayList()
-        adapter = PostAdapter2(requireContext(), favoritePosts)
+        // When user taps a date → open list screen
+        binding.calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
+            val c = Calendar.getInstance()
+            c.set(Calendar.YEAR, year)
+            c.set(Calendar.MONTH, month)          // month is 0-based already
+            c.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+            c.set(Calendar.HOUR_OF_DAY, 0)
+            c.set(Calendar.MINUTE, 0)
+            c.set(Calendar.SECOND, 0)
+            c.set(Calendar.MILLISECOND, 0)
 
-        binding.recyclerFavorites.layoutManager = GridLayoutManager(requireContext(), 3)
-        binding.recyclerFavorites.adapter = adapter
+            val selectedDateMillis = c.timeInMillis
 
-        loadFavoritePosts(currentUserId)
+            val intent = Intent(requireContext(), FavoritesDayActivity::class.java).apply {
+                putExtra("selectedDateMillis", selectedDateMillis)
+            }
+            startActivity(intent)
+        }
 
         return binding.root
-    }
-
-    private fun loadFavoritePosts(userId: String) {
-        favoritesRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val favIds = ArrayList<String>()
-                for (child in snapshot.children) {
-                    favIds.add(child.key.toString())
-                }
-
-                if (favIds.isEmpty()) {
-                    showEmptyState(true)
-                    return
-                }
-
-                // Fetch the actual post data
-                databaseRef.addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(postSnap: DataSnapshot) {
-                        favoritePosts.clear()
-                        for (data in postSnap.children) {
-                            val post = data.getValue(Post::class.java)
-                            if (post != null && favIds.contains(post.postid)) {
-                                favoritePosts.add(post)
-                            }
-                        }
-
-                        if (favoritePosts.isEmpty()) {
-                            showEmptyState(true)
-                        } else {
-                            showEmptyState(false)
-                        }
-
-                        favoritePosts.reverse() // show newest first
-                        adapter.updateList(favoritePosts)
-                    }
-
-                    override fun onCancelled(error: DatabaseError) {}
-                })
-            }
-
-            override fun onCancelled(error: DatabaseError) {}
-        })
-    }
-
-    private fun showEmptyState(show: Boolean) {
-        binding.tvNoFavorites.visibility = if (show) View.VISIBLE else View.GONE
-        binding.recyclerFavorites.visibility = if (show) View.GONE else View.VISIBLE
     }
 
     override fun onDestroyView() {

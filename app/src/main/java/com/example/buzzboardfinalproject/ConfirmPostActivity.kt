@@ -4,11 +4,11 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.util.Base64
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.buzzboardfinalproject.databinding.ActivityConfirmPostBinding
-import android.util.Base64
-import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
@@ -28,15 +28,16 @@ class ConfirmPostActivity : AppCompatActivity() {
         val title = intent.getStringExtra("title")
         val description = intent.getStringExtra("description")
         val location = intent.getStringExtra("location")
-        val time = intent.getStringExtra("time")
+        val time = intent.getStringExtra("time")          // 👈 formatted date/time
         imageUri = intent.getStringExtra("imageUri")
 
         // Fill preview fields
         binding.titleText.text = title
         binding.descriptionText.text = description
         binding.locationText.text = location
+        binding.timeText.text = time ?: ""               // 👈 show under location
 
-
+        // Preview image
         if (!imageUri.isNullOrEmpty()) {
             try {
                 Glide.with(this).load(Uri.parse(imageUri)).into(binding.previewImage)
@@ -81,15 +82,21 @@ class ConfirmPostActivity : AppCompatActivity() {
             val ref = FirebaseDatabase.getInstance().reference.child("Posts")
             val firestore = FirebaseFirestore.getInstance()
             val postId = ref.push().key!!
+            val eventDateMillis = intent.getLongExtra("eventDateMillis", 0L)
 
             val postMap = HashMap<String, Any>()
             postMap["postid"] = postId
             postMap["title"] = title
             postMap["description"] = description
             postMap["location"] = location ?: ""
-            postMap["time"] = time ?: ""
             postMap["postimage"] = imageBase64
             postMap["publisher"] = FirebaseAuth.getInstance().currentUser!!.uid
+            postMap["eventDateMillis"] = eventDateMillis
+
+            // NEW: store formatted time so Home/Detail can display it
+            if (!time.isNullOrEmpty()) {
+                postMap["time"] = time
+            }
 
             ref.child(postId).updateChildren(postMap)
             firestore.collection("Posts").document(postId).set(postMap)
