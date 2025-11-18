@@ -6,6 +6,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -116,17 +117,37 @@ class HomeFragment : Fragment() {
         })
     }
 
-    // added: listen to Polls ordered by createdAt
     private fun startPollsListener() {
+        val currentUid = FirebaseAuth.getInstance().currentUser?.uid
         pollsListener = pollsRef
             .orderByChild("createdAt")
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val polls = snapshot.children.mapNotNull { it.getValue(Poll::class.java) }
-                    pollAdapter.submitList(polls.reversed())
+                    val now = System.currentTimeMillis()
+
+                    val allPolls = snapshot.children.mapNotNull { it.getValue(Poll::class.java) }
+
+                    // Show poll if:
+                    //   - not expired, or
+                    //   - user is the creator
+                    val visiblePolls = allPolls.filter { poll ->
+                        val end = poll.endTime ?: Long.MAX_VALUE
+                        val creator = poll.createdBy
+                        end > now || (creator != null && creator == currentUid)
+                    }
+
+                    // newest first
+                    val sorted = visiblePolls.sortedByDescending { it.createdAt }
+
+                    pollAdapter.submitList(sorted)
                 }
+
                 override fun onCancelled(error: DatabaseError) {
-                    // no-op
+                    Toast.makeText(
+                        requireContext(),
+                        "Polls read failed: ${error.code}",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             })
     }
