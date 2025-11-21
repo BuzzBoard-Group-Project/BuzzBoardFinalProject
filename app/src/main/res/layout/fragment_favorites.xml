@@ -6,31 +6,52 @@
     android:orientation="vertical"
     android:background="@android:color/white">
 
-    <!-- Top bar -->
+    <!-- Top title bar -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="16dp">
+        android:padding="16dp"
+        android:gravity="center_vertical">
 
         <TextView
-            android:id="@+id/tvCalendarTitle"
-            android:layout_width="wrap_content"
+            android:id="@+id/tvFavoritesTitle"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Event Calendar"
-            android:textSize="18sp"
+            android:layout_weight="1"
+            android:text="My Event Calendar"
+            android:textSize="20sp"
             android:textStyle="bold"
+            android:gravity="center"
             android:textColor="@android:color/black" />
     </LinearLayout>
 
-    <!-- Calendar -->
-    <CalendarView
-        android:id="@+id/calendarView"
+    <!-- Divider under title -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DDDDDD" />
+
+    <!-- Calendar with border -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp" />
+        android:layout_margin="12dp"
+        android:padding="4dp"
+        android:background="@drawable/bg_calendar_border">
 
+        <CalendarView
+            android:id="@+id/calendarView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:background="@drawable/bg_calendar_card"
+            android:theme="@style/CustomCalendarView" />
+
+
+    </LinearLayout>
+
+    <!-- Hint text -->
     <TextView
         android:id="@+id/tvCalendarHint"
         android:layout_width="match_parent"
@@ -39,4 +60,32 @@
         android:text="Tap a date to see your favorite events"
         android:textSize="14sp"
         android:textColor="@android:color/darker_gray" />
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#EEEEEE" />
+
+    <!-- Empty state -->
+    <TextView
+        android:id="@+id/tvEmpty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="No favorite events on this day"
+        android:textSize="14sp"
+        android:textColor="@android:color/darker_gray"
+        android:gravity="center"
+        android:visibility="gone" />
+
+    <!-- List of favorite events -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvFavoritesEvents"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingHorizontal="8dp"
+        android:clipToPadding="false" />
+
 </LinearLayout>

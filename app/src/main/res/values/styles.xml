@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Weekday letters (S, M, T, W, T, F, S) -->
+    <style name="CalendarWeekText">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#757575</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Day number style -->
+    <style name="CalendarDateTextStyle" parent="@android:style/TextAppearance.Material.Body1">
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <!-- 🎯 Theme overlay used ONLY by CalendarView -->
+    <!-- NOTE: this parent *does* exist with the Material library you’re using -->
+    <style name="CustomCalendarView" parent="ThemeOverlay.MaterialComponents">
+        <!-- apply our date text style -->
+        <item name="android:dateTextAppearance">@style/CalendarDateTextStyle</item>
+
+        <!-- try to tint the selection circle (may not affect all Android versions) -->
+        <item name="android:colorAccent">#DCC500</item>
+        <item name="colorAccent">#DCC500</item>
+    </style>
+
+</resources>

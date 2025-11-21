@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:layout_marginHorizontal="16dp"
+android:layout_marginTop="8dp"
+app:cardCornerRadius="16dp"
+app:cardUseCompatPadding="true"
+app:cardElevation="2dp">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="64dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingHorizontal="12dp">
+
+    <!-- Thumbnail -->
+    <ImageView
+        android:id="@+id/ivEventThumb"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/add_image_icon"
+        android:background="@drawable/bg_circle_avatar"
+        android:padding="2dp" />
+
+    <!-- Title + DateTime -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvEventTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Event title"
+            android:textColor="@android:color/black"
+            android:textSize="15sp"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <TextView
+            android:id="@+id/tvEventDateTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nov 21, 2025 • 7:00 PM"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+</LinearLayout>
+
+</androidx.cardview.widget.CardView>
