@@ -3,14 +3,49 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="end"
-    android:padding="6dp">
+    android:padding="6dp"
+    android:orientation="vertical">
 
+    <!-- Sender name (right-aligned for you) -->
     <TextView
-        android:id="@+id/tvMyMessage"
+        android:id="@+id/tvSenderName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_chat_me"
-        android:padding="10dp"
-        android:textColor="@color/white"
-        android:text="Hi" />
+        android:layout_gravity="end"
+        android:text="You"
+        android:textSize="11sp"
+        android:textColor="#777777"
+        android:layout_marginBottom="2dp" />
+
+    <!-- Bubble -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end">
+
+        <TextView
+            android:id="@+id/tvMessageText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_chat_me"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:text="hey"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:maxWidth="260dp" />
+    </LinearLayout>
+
+    <!-- Time under bubble -->
+    <TextView
+        android:id="@+id/tvMessageTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:text="7:53 PM"
+        android:textSize="11sp"
+        android:textColor="#888888"
+        android:layout_marginTop="2dp" />
 </LinearLayout>

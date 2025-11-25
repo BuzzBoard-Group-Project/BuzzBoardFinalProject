@@ -2,81 +2,116 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="#FFF9FB">
 
-    <!-- Top bar -->
+    <!-- 🔹 Top Toolbar -->
     <LinearLayout
         android:id="@+id/topBar"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="56dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
-        android:background="@color/purple_100"
-        app:layout_constraintTop_toTopOf="parent">
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:background="#FFC107"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:ignore="ExtraText">
 
         <ImageView
             android:id="@+id/btnBack"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:padding="4dp"
             android:src="@drawable/ic_arrow_back"
-            android:contentDescription="Back" />
+            android:contentDescription="Back"
+            app:tint="@android:color/black" />
 
         <TextView
             android:id="@+id/tvChatTitle"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
             android:text="Event Chat"
-            android:textColor="@color/black"
+            android:textColor="@android:color/black"
             android:textSize="18sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
+
+        <!-- 👥 NEW: participants button in top-right -->
+        <ImageButton
+            android:id="@+id/btnParticipants"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_people"
+            android:contentDescription="View participants"
+            app:tint="@android:color/black" />
+
+        <ImageButton
+            android:id="@+id/btnLeaveChat"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_exit_to_app"
+            android:contentDescription="Leave chat"
+            app:tint="@android:color/black" />
+
+
     </LinearLayout>
 
-    <!-- Chat messages -->
+    <!-- 🗨️ Chat Messages List -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvMessages"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:padding="8dp"
+        android:padding="10dp"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
         app:layout_constraintTop_toBottomOf="@id/topBar"
         app:layout_constraintBottom_toTopOf="@id/messageInputLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Input field + send -->
+    <!-- ✏️ Input Bar -->
     <LinearLayout
         android:id="@+id/messageInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="8dp"
-        android:background="@color/white"
+        android:padding="10dp"
+        android:background="#FFFFFF"
+        android:elevation="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <EditText
             android:id="@+id/etMessage"
-            android:layout_width="1dp"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
             android:layout_weight="1"
-            android:hint="Type a message..."
             android:background="@drawable/edit_text_bg"
-            android:padding="10dp"
+            android:hint="Type a message..."
+            android:padding="12dp"
             android:textColor="@color/black"
-            android:textSize="14sp"/>
+            android:textSize="14sp"
+            android:maxLines="4"
+            android:inputType="textCapSentences|textMultiLine"/>
 
         <ImageButton
             android:id="@+id/btnSend"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:layout_marginStart="6dp"
+            android:background="@android:color/transparent"
             android:src="@drawable/ic_send"
-            android:contentDescription="Send"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            app:tint="@color/black" />
+            app:tint="@color/black"
+            android:contentDescription="Send"/>
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

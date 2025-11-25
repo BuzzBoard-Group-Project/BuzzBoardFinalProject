@@ -5,48 +5,82 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MessageAdapter(
-    private val list: List<ChatMessage>,
+    private val messages: List<ChatMessage>,
     private val currentUid: String?
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val TYPE_ME = 1
-    private val TYPE_OTHER = 2
+    private val TYPE_SENT = 1
+    private val TYPE_RECEIVED = 2
 
     override fun getItemViewType(position: Int): Int {
-        val msg = list[position]
-        return if (msg.senderId == currentUid) TYPE_ME else TYPE_OTHER
+        val msg = messages[position]
+        return if (msg.senderId == currentUid) TYPE_SENT else TYPE_RECEIVED
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (viewType == TYPE_ME) {
-            val v = LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_chat_me, parent, false)
-            MeHolder(v)
+        val inflater = LayoutInflater.from(parent.context)
+        return if (viewType == TYPE_SENT) {
+            val view = inflater.inflate(R.layout.item_chat_me, parent, false)
+            SentHolder(view)
         } else {
-            val v = LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_chat_other, parent, false)
-            OtherHolder(v)
+            val view = inflater.inflate(R.layout.item_chat_other, parent, false)
+            ReceivedHolder(view)
         }
     }
 
-    override fun getItemCount(): Int = list.size
+    override fun getItemCount(): Int = messages.size
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val msg = list[position]
-        if (holder is MeHolder) {
-            holder.txt.text = msg.text
-        } else if (holder is OtherHolder) {
-            holder.txt.text = msg.text
+        val msg = messages[position]
+        val timeText = formatTime(msg.timestamp)
+
+        when (holder) {
+            is SentHolder -> {
+                holder.message.text = msg.text
+                holder.time.text = timeText
+
+                // For your own messages, show "You"
+                holder.name.text = "You"
+            }
+            is ReceivedHolder -> {
+                holder.message.text = msg.text
+                holder.time.text = timeText
+
+                // For others, use senderName or fallback
+                val label = msg.senderName.ifBlank { "Student" }
+                holder.name.text = label
+            }
         }
     }
 
-    class MeHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val txt: TextView = itemView.findViewById(R.id.tvMyMessage)
+    class SentHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val message: TextView = itemView.findViewById(R.id.tvMessageText)
+        val time: TextView = itemView.findViewById(R.id.tvMessageTime)
+        val name: TextView = itemView.findViewById(R.id.tvSenderName)
     }
 
-    class OtherHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val txt: TextView = itemView.findViewById(R.id.tvOtherMessage)
+    class ReceivedHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val message: TextView = itemView.findViewById(R.id.tvMessageText)
+        val time: TextView = itemView.findViewById(R.id.tvMessageTime)
+        val name: TextView = itemView.findViewById(R.id.tvSenderName)
+    }
+
+    private fun formatTime(timestamp: Long): String {
+        if (timestamp <= 0L) return ""
+        val now = System.currentTimeMillis()
+        val oneDayMillis = 24 * 60 * 60 * 1000L
+        val sameDay = (now / oneDayMillis) == (timestamp / oneDayMillis)
+
+        return if (sameDay) {
+            SimpleDateFormat("h:mm a", Locale.getDefault())
+                .format(Date(timestamp))
+        } else {
+            SimpleDateFormat("MMM d", Locale.getDefault())
+                .format(Date(timestamp))
+        }
     }
 }
