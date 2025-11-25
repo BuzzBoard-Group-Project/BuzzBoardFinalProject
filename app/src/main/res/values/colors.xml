@@ -4,4 +4,8 @@
     <color name="white">#FFFFFFFF</color>
     <color name="yellow">#f3ca2a</color>
     <color name="grey">#ff424242</color>
+    <color name="beeYellow">#DCC500</color>
+    <color name="textDark">#222222</color>
+    <color name="textGray">#757575</color>
+
 </resources>

@@ -56,17 +56,26 @@ class EventChatActivity : AppCompatActivity() {
         if (text.isEmpty()) return
 
         val msgRef = db.getReference("EventChats").child(chatId).child("messages").push()
+        val now = System.currentTimeMillis()
+
         val msg = ChatMessage(
             senderId = uid,
             text = text,
-            timestamp = System.currentTimeMillis()
+            timestamp = now
         )
+
         msgRef.setValue(msg).addOnSuccessListener {
-            // also update lastMessage for list screen if you ever need it
-            db.getReference("EventChats").child(chatId).child("lastMessage").setValue(text)
+            val chatMetaRef = db.getReference("EventChats").child(chatId)
+
+            // store last message text
+            chatMetaRef.child("lastMessage").setValue(text)
+            // 👇 store last activity time (used for sorting)
+            chatMetaRef.child("lastMessageTime").setValue(now)
+
             binding.etMessage.setText("")
         }
     }
+
 
     private fun listenForMessages() {
         val msgsRef = db.getReference("EventChats").child(chatId).child("messages")
@@ -78,7 +87,9 @@ class EventChatActivity : AppCompatActivity() {
                     if (m != null) messages.add(m)
                 }
                 adapter.notifyDataSetChanged()
-                binding.rvMessages.scrollToPosition(messages.size - 1)
+                if (messages.isNotEmpty()) {
+                    binding.rvMessages.scrollToPosition(messages.size - 1)
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {}

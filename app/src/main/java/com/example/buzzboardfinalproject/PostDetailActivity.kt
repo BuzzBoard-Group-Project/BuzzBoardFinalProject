@@ -26,8 +26,11 @@ class PostDetailActivity : AppCompatActivity() {
     private lateinit var favoritesRef: DatabaseReference
     private lateinit var registrationsRef: DatabaseReference
     private lateinit var postRef: DatabaseReference
+    private val eventChatsRef: DatabaseReference by lazy {
+        FirebaseDatabase.getInstance().getReference("EventChats")
+    }
 
-    // 👇 comments
+    // comments
     private lateinit var commentsRef: DatabaseReference
     private var commentList = ArrayList<Comment>()
     private lateinit var commentAdapter: CommentAdapter
@@ -50,9 +53,9 @@ class PostDetailActivity : AppCompatActivity() {
         favoritesRef = db.getReference("Favorites")
         registrationsRef = db.getReference("EventRegistrations").child(postId)
         postRef = db.getReference("Posts").child(postId)
-        commentsRef = db.getReference("Comments").child(postId)   // 👈 all comments for this post
+        commentsRef = db.getReference("Comments").child(postId)
 
-        // set up comments RecyclerView
+        // comments RecyclerView
         commentAdapter = CommentAdapter(commentList)
         binding.rvComments.layoutManager = LinearLayoutManager(this)
         binding.rvComments.adapter = commentAdapter
@@ -60,16 +63,17 @@ class PostDetailActivity : AppCompatActivity() {
         loadPostDetails()
         checkFavoriteStatus()
         checkIfUserRegistered()
-        loadComments()  // 👈 NEW
+        loadComments()
 
         binding.btnFavorite.setOnClickListener { toggleFavorite() }
         binding.btnRegisterEvent.setOnClickListener { toggleRegistration() }
 
-        // 👇 send comment
         binding.btnSendComment.setOnClickListener {
             sendComment()
         }
     }
+
+    // ========= POST DETAILS =========
 
     private fun loadPostDetails() {
         postRef.get().addOnSuccessListener { snapshot ->
@@ -79,11 +83,9 @@ class PostDetailActivity : AppCompatActivity() {
                 binding.tvPostDetailDescription.text = post.description
                 binding.tvLocation.text = post.location
 
-                // ✅ Show event date nicely if available
                 if (post.eventDateMillis > 0L) {
                     binding.tvPostDetailDate.text = formatDateTime(post.eventDateMillis)
                 } else {
-                    // fallback to whatever was previously stored
                     binding.tvPostDetailDate.text = post.time
                 }
 
@@ -112,11 +114,9 @@ class PostDetailActivity : AppCompatActivity() {
                     val c = child.getValue(Comment::class.java)
                     if (c != null) temp.add(c)
                 }
-                // newest at bottom
                 commentList = temp
                 commentAdapter.updateList(commentList)
 
-                // auto-scroll to latest
                 if (commentList.isNotEmpty()) {
                     binding.rvComments.scrollToPosition(commentList.size - 1)
                 }
@@ -135,7 +135,6 @@ class PostDetailActivity : AppCompatActivity() {
             return
         }
 
-        // we'll use email as username for now
         val username = FirebaseAuth.getInstance().currentUser?.email ?: "Student"
         val commentId = commentsRef.push().key ?: return
 
@@ -187,7 +186,7 @@ class PostDetailActivity : AppCompatActivity() {
         }
     }
 
-    // ========= REGISTER =========
+    // ========= REGISTER + CREATE CHAT =========
 
     private fun checkIfUserRegistered() {
         val uid = currentUserId ?: return
@@ -206,10 +205,12 @@ class PostDetailActivity : AppCompatActivity() {
 
         registrationsRef.child(uid).get().addOnSuccessListener { snap ->
             if (snap.exists()) {
+                // unregister
                 registrationsRef.child(uid).removeValue()
                 isRegistered = false
                 Toast.makeText(this, "Registration canceled.", Toast.LENGTH_SHORT).show()
             } else {
+                // register
                 val data = mapOf(
                     "userId" to uid,
                     "timestamp" to System.currentTimeMillis()
@@ -217,6 +218,12 @@ class PostDetailActivity : AppCompatActivity() {
                 registrationsRef.child(uid).setValue(data)
                 isRegistered = true
                 Toast.makeText(this, "Registered for this event ✅", Toast.LENGTH_SHORT).show()
+
+                // 🔥 create/join chat for this event
+                createOrJoinChat(uid)
+
+                // (optional) open chat immediately:
+                // openChat()
             }
             updateRegisterButton()
         }
@@ -227,10 +234,38 @@ class PostDetailActivity : AppCompatActivity() {
             if (isRegistered) "Registered ✅" else "Register"
     }
 
+    /**
+     * Ensure there is a chat room for this post, and that this user is a participant.
+     * Uses postId as chatId so it's 1 chat per event.
+     */
+    private fun createOrJoinChat(uid: String) {
+        val chatRef = eventChatsRef.child(postId)
+
+        val title = binding.tvPostTitle.text.toString().ifBlank { "Event chat" }
+
+        val now = System.currentTimeMillis()
+
+        val updates = hashMapOf<String, Any>(
+            "postId" to postId,
+            "title" to title,
+            "participants/$uid" to true,
+            "lastMessageTime" to now
+        )
+
+        chatRef.updateChildren(updates)
+    }
+
+
+    // If you want to open chat right away after registering:
+    private fun openChat() {
+        val intent = Intent(this, EventChatActivity::class.java)
+        intent.putExtra("post_id", postId)  // chatId == postId
+        startActivity(intent)
+    }
+
     // ========= UTIL =========
 
     private fun formatDateTime(millis: Long): String {
-        // Example: "Wed, Nov 12 • 3:30 PM"
         val sdf = SimpleDateFormat("EEE, MMM d • h:mm a", Locale.getDefault())
         sdf.timeZone = TimeZone.getDefault()
         return sdf.format(Date(millis))

@@ -8,6 +8,6 @@
     <item android:state_pressed="true" android:color="@color/yellow"/>
 
     <!-- Default grey text -->
-    <item android:color="#333333"/>
+    <item android:color="#000000"/>
 </selector>
 
