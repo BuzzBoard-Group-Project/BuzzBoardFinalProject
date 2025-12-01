@@ -24,34 +24,25 @@ class ConfirmPostActivity : AppCompatActivity() {
         binding = ActivityConfirmPostBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Get data passed from AddPostActivity
         val title = intent.getStringExtra("title")
         val description = intent.getStringExtra("description")
         val location = intent.getStringExtra("location")
-        val time = intent.getStringExtra("time")          // 👈 formatted date/time
+        val time = intent.getStringExtra("time")
         imageUri = intent.getStringExtra("imageUri")
 
-        // Fill preview fields
         binding.titleText.text = title
         binding.descriptionText.text = description
         binding.locationText.text = location
-        binding.timeText.text = time ?: ""               // 👈 show under location
+        binding.timeText.text = time ?: ""
 
-        // Preview image
         if (!imageUri.isNullOrEmpty()) {
-            try {
-                Glide.with(this).load(Uri.parse(imageUri)).into(binding.previewImage)
-            } catch (e: Exception) {
-                Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show()
-            }
+            Glide.with(this).load(Uri.parse(imageUri)).into(binding.previewImage)
         }
 
-        // Cancel → return to AddPostActivity
         binding.editButton.setOnClickListener {
             finish()
         }
 
-        // Confirm → upload to Firebase and return to main feed
         binding.confirmButton.setOnClickListener {
             uploadPostToFirebase(title, description, location, time, imageUri)
         }
@@ -92,21 +83,32 @@ class ConfirmPostActivity : AppCompatActivity() {
             postMap["postimage"] = imageBase64
             postMap["publisher"] = FirebaseAuth.getInstance().currentUser!!.uid
             postMap["eventDateMillis"] = eventDateMillis
+            postMap["createdAt"] = System.currentTimeMillis()   // IMPORTANT
 
-            // NEW: store formatted time so Home/Detail can display it
+
+            // FIX: ALWAYS create createdAt timestamp
+            postMap["createdAt"] = System.currentTimeMillis()
+
+            // Pretty event time label
             if (!time.isNullOrEmpty()) {
                 postMap["time"] = time
+            }
+
+            // Store event date separately (NOT as createdAt)
+            if (eventDateMillis > 0) {
+                postMap["eventDateMillis"] = eventDateMillis
             }
 
             ref.child(postId).updateChildren(postMap)
             firestore.collection("Posts").document(postId).set(postMap)
 
-            Toast.makeText(this, " Post uploaded successfully", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Post uploaded successfully", Toast.LENGTH_LONG).show()
 
             val intent = Intent(this, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
             startActivity(intent)
             finish()
+
         } catch (e: Exception) {
             Toast.makeText(this, "Upload failed", Toast.LENGTH_SHORT).show()
             e.printStackTrace()

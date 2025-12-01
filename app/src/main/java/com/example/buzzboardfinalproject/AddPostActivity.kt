@@ -189,6 +189,7 @@ class AddPostActivity : AppCompatActivity() {
                     postMap["title"] = binding.TitlePost.text.toString()
                     postMap["location"] = binding.LocationPost.text.toString()
                     postMap["eventDateMillis"] = selectedEventDateMillis
+                    postMap["createdAt"] = System.currentTimeMillis()
                     if (eventTimeDisplay.isNotEmpty()) {
                         postMap["time"] = eventTimeDisplay
                     }

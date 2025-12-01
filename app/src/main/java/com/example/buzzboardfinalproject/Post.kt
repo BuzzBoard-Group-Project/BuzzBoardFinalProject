@@ -11,7 +11,7 @@ data class Post(
     var isFavorite: Boolean = false,
     var username: String = "",
     var eventDateMillis: Long = 0L,
-
+    var createdAt: Long = 0L          // REQUIRED
 
 )
         
