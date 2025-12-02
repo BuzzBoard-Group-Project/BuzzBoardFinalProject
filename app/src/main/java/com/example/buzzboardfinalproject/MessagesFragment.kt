@@ -12,7 +12,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import android.content.Context
 
-
 data class SimpleChatRoom(
     val chatId: String = "",
     val title: String = "",
@@ -30,6 +29,10 @@ class MessagesFragment : Fragment() {
 
     private val rooms = ArrayList<SimpleChatRoom>()
     private lateinit var adapter: SimpleChatAdapter
+
+    // 🔹 Keep references to Firebase so we can clean them up
+    private lateinit var eventChatsRef: DatabaseReference
+    private var chatsListener: ValueEventListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,13 +57,17 @@ class MessagesFragment : Fragment() {
 
     private fun loadMyChats() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        val ref = FirebaseDatabase.getInstance().getReference("EventChats")
+
+        eventChatsRef = FirebaseDatabase.getInstance().getReference("EventChats")
 
         // 🔹 Read local flags for chats you’ve left
         val prefs = requireContext().getSharedPreferences("chat_prefs", Context.MODE_PRIVATE)
 
-        ref.addValueEventListener(object : ValueEventListener {
+        val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                // ⛑ View might be gone if user navigated away
+                val b = _binding ?: return
+
                 rooms.clear()
 
                 for (chatSnap in snapshot.children) {
@@ -113,18 +120,36 @@ class MessagesFragment : Fragment() {
 
                 rooms.sortByDescending { it.lastActive }
 
+                // This only touches the adapter, which is safe
                 adapter.submitList(rooms.toList())
-                binding.tvEmpty.visibility =
-                    if (rooms.isEmpty()) View.VISIBLE else View.GONE
+
+                // ✅ Safe UI access through the local binding `b`
+                b.tvEmpty.visibility = if (rooms.isEmpty()) View.VISIBLE else View.GONE
             }
 
-            override fun onCancelled(error: DatabaseError) {}
-        })
-    }
+            override fun onCancelled(error: DatabaseError) {
+                // Optional: only touch UI if binding still exists
+                // _binding?.let {
+                //     Toast.makeText(it.root.context, "Error loading chats", Toast.LENGTH_SHORT).show()
+                // }
+            }
+        }
 
+        eventChatsRef.addValueEventListener(listener)
+        chatsListener = listener
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
+
+        // 🧹 Detach Firebase listener so callbacks stop when view is gone
+        chatsListener?.let { listener ->
+            if (::eventChatsRef.isInitialized) {
+                eventChatsRef.removeEventListener(listener)
+            }
+        }
+        chatsListener = null
+
         _binding = null
     }
 }

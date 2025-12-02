@@ -8,8 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
 import com.example.buzzboardfinalproject.databinding.FragmentProfileBinding
+import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 
@@ -17,10 +17,11 @@ class ProfileFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
+
     private lateinit var postsRef: DatabaseReference
     private lateinit var usersRef: DatabaseReference
-    private lateinit var userPosts: ArrayList<Post>
-    private lateinit var adapter: PostAdapter2
+    private lateinit var followingRef: DatabaseReference
+    private lateinit var followersRef: DatabaseReference
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,31 +33,54 @@ class ProfileFragment : Fragment() {
         val currentUser = FirebaseAuth.getInstance().currentUser
         val userId = currentUser?.uid ?: return view
 
-        postsRef = FirebaseDatabase.getInstance().getReference("Posts")
-        usersRef = FirebaseDatabase.getInstance().getReference("Users").child(userId)
+        val db = FirebaseDatabase.getInstance()
+        postsRef = db.getReference("Posts")
+        usersRef = db.getReference("Users").child(userId)
+        followingRef = db.getReference("Following").child(userId)
+        followersRef = db.getReference("Followers").child(userId)
 
-        // Load and display the user's info
+        // Header
         loadUserProfile()
 
-        // Edit profile button
+        // Counts
+        loadPostCount(userId)
+        loadFollowingCount()
+        loadFollowersCount()
+
+        // Edit profile
         binding.btnEditProfile.setOnClickListener {
             startActivity(Intent(requireContext(), EditProfileActivity::class.java))
         }
 
-        // Load user's posts
-        userPosts = ArrayList()
-        adapter = PostAdapter2(
-            requireContext(),
-            userPosts,
+        // Click stats -> list screens
+        binding.layoutFollowing.setOnClickListener {
+            val i = Intent(requireContext(), FollowListActivity::class.java)
+            i.putExtra("mode", "following")
+            startActivity(i)
+        }
 
-        )
-// deleted
-        binding.recyclerUserPosts.layoutManager = GridLayoutManager(requireContext(), 3)
-        binding.recyclerUserPosts.adapter = adapter
+        binding.layoutFollowers.setOnClickListener {
+            val i = Intent(requireContext(), FollowListActivity::class.java)
+            i.putExtra("mode", "followers")
+            startActivity(i)
+        }
 
-        fetchUserPosts(userId)
+        // Tabs
+        val tabAdapter = ProfileTabAdapter(this)
+        binding.profileViewPager.adapter = tabAdapter
+
+        TabLayoutMediator(binding.profileTabLayout, binding.profileViewPager) { tab, position ->
+            tab.text = when (position) {
+                0 -> "Posts"
+                1 -> "Favorites"
+                else -> "Registered"
+            }
+        }.attach()
+
         return view
     }
+
+    // ---------- header ----------
 
     private fun loadUserProfile() {
         usersRef.addValueEventListener(object : ValueEventListener {
@@ -64,41 +88,75 @@ class ProfileFragment : Fragment() {
                 val name = snapshot.child("name").getValue(String::class.java)
                 val bio = snapshot.child("bio").getValue(String::class.java)
                 val profileImage = snapshot.child("profileImage").getValue(String::class.java)
+                val accountType = snapshot.child("accountType").getValue(String::class.java)
 
                 binding.tvProfileName.text = name ?: "BuzzBoard User"
-                binding.tvBio.text = bio ?: "VSU Student | AbstraKt 🐝"
+                binding.tvBio.text = bio ?: "VSU Student 🐝"
 
-                // Decode Base64 image
                 if (!profileImage.isNullOrEmpty()) {
                     try {
-                        val imageBytes = Base64.decode(profileImage, Base64.DEFAULT)
-                        val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                        val bytes = Base64.decode(profileImage, Base64.DEFAULT)
+                        val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
                         binding.imgProfilePicture.setImageBitmap(bitmap)
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
                 }
+
+                applyBadge(accountType)
             }
 
             override fun onCancelled(error: DatabaseError) {}
         })
     }
 
-    private fun fetchUserPosts(userId: String) {
+    private fun applyBadge(accountType: String?) {
+        val badgeView = binding.imgProfileBadge
+        when (accountType?.lowercase()) {
+            "student" -> {
+                badgeView.setImageResource(R.drawable.ic_badge_student)
+                badgeView.visibility = View.VISIBLE
+            }
+            "organization" -> {
+                badgeView.setImageResource(R.drawable.ic_badge_organization)
+                badgeView.visibility = View.VISIBLE
+            }
+            "official", "buzzboard", "official buzzboard" -> {
+                badgeView.setImageResource(R.drawable.ic_badge_buzzboard)
+                badgeView.visibility = View.VISIBLE
+            }
+            else -> badgeView.visibility = View.GONE
+        }
+    }
+
+    // ---------- counts ----------
+
+    private fun loadPostCount(userId: String) {
         postsRef.orderByChild("publisher").equalTo(userId)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    userPosts.clear()
-                    for (dataSnap in snapshot.children) {
-                        val post = dataSnap.getValue(Post::class.java)
-                        if (post != null) userPosts.add(post)
-                    }
-                    binding.tvPostCount.text = userPosts.size.toString()
-                    adapter.notifyDataSetChanged()
+                    binding.tvPostCount.text = snapshot.childrenCount.toString()
                 }
-
                 override fun onCancelled(error: DatabaseError) {}
             })
+    }
+
+    private fun loadFollowingCount() {
+        followingRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                binding.tvFollowingCount.text = snapshot.childrenCount.toString()
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
+
+    private fun loadFollowersCount() {
+        followersRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                binding.tvFollowersCount.text = snapshot.childrenCount.toString()
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        })
     }
 
     override fun onDestroyView() {

@@ -40,25 +40,74 @@
             android:background="@color/grey"
             android:contentDescription="@string/post_image" />
 
-        <!-- ❤️ Favorite Button Row -->
+        <!-- ⭐ Likes + Bee favorite row -->
         <LinearLayout
+            android:id="@+id/rowLikesAndFavorite"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="end"
+            android:gravity="center_vertical"
             android:layout_marginTop="8dp">
 
+            <!-- Likes text -->
+            <!-- Thumbs up -->
             <ImageButton
-                android:id="@+id/btnFavorite"
+                android:id="@+id/btnLikeDetail"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@android:color/transparent"
+                android:padding="4dp"
+                android:src="@drawable/ic_thumb_up"
+                android:contentDescription="Like"
+                app:tint="@android:color/black" />
+
+            <TextView
+                android:id="@+id/tvLikeCountDetail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minWidth="48dp"
-                android:minHeight="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/add_to_favorites"
-                android:padding="8dp"
-                app:srcCompat="@drawable/baseline_favorite_border_24"
-                app:tint="@color/black" />
+                android:layout_marginStart="4dp"
+                android:text="0"
+                android:textSize="14sp"
+                android:textColor="@android:color/black" />
+
+            <!-- Thumbs down -->
+            <ImageButton
+                android:id="@+id/btnDislikeDetail"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="12dp"
+                android:background="@android:color/transparent"
+                android:padding="4dp"
+                android:src="@drawable/ic_thumb_down"
+                android:contentDescription="Dislike"
+                app:tint="@android:color/black" />
+
+            <TextView
+                android:id="@+id/tvDislikeCountDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="0"
+                android:textSize="14sp"
+                android:textColor="@android:color/black" />
+            <!-- spacer -->
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <!-- 🐝 Bee favorite button (replaces heart) -->
+            <ImageButton
+                android:id="@+id/btnFavorite"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/ic_bee_favorite"
+            android:src="@drawable/ic_bee_outline"
+            android:contentDescription="@string/add_to_favorites"
+            android:padding="6dp"
+            android:scaleType="centerInside"
+            android:backgroundTint="@null"
+            app:tint="@null" />
         </LinearLayout>
 
         <!-- 📝 Title -->
@@ -113,7 +162,7 @@
             android:textColor="@color/black"
             android:textStyle="bold" />
 
-        <!-- 👇 NEW: Comments title -->
+        <!-- 👇 Comments title -->
         <TextView
             android:id="@+id/tvCommentsTitle"
             android:layout_width="match_parent"
@@ -124,7 +173,7 @@
             android:textStyle="bold"
             android:textColor="@color/black" />
 
-        <!-- 👇 NEW: comments list -->
+        <!-- 👇 comments list -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvComments"
             android:layout_width="match_parent"
@@ -132,7 +181,7 @@
             android:layout_marginTop="8dp"
             android:nestedScrollingEnabled="false" />
 
-        <!-- 👇 NEW: add comment row -->
+        <!-- 👇 add comment row -->
         <LinearLayout
             android:id="@+id/commentInputRow"
             android:layout_width="match_parent"
@@ -162,3 +211,4 @@
 
     </LinearLayout>
 </ScrollView>
+

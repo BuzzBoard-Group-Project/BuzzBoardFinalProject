@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="16dp"
@@ -97,36 +98,57 @@
             android:textColor="@android:color/black"
             android:textSize="12sp" />
 
+
+        <!-- ACTION ROW: thumbs on left, bee favorite on right -->
         <!-- ACTION ROW: thumbs on left, bee favorite on right -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            tools:ignore="ExtraText">
 
             <!-- Thumbs up -->
             <ImageButton
                 android:id="@+id/btnLike"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:background="@android:color/transparent"
                 android:padding="4dp"
                 android:src="@drawable/ic_thumb_up"
                 android:contentDescription="Like"
                 app:tint="@android:color/black" />
 
+            <TextView
+                android:id="@+id/tvLikeCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:text="0"
+                android:textSize="12sp"
+                android:textColor="@android:color/black" />
+
             <!-- Thumbs down -->
             <ImageButton
                 android:id="@+id/btnDislike"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="4dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="8dp"
                 android:background="@android:color/transparent"
                 android:padding="4dp"
                 android:src="@drawable/ic_thumb_down"
                 android:contentDescription="Dislike"
                 app:tint="@android:color/black" />
+
+            <TextView
+                android:id="@+id/tvDislikeCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:text="0"
+                android:textSize="12sp"
+                android:textColor="@android:color/black" />
 
             <!-- spacer pushes bee to the right -->
             <View
@@ -134,21 +156,21 @@
                 android:layout_height="1dp"
                 android:layout_weight="1" />
 
+
             <!-- Bee favorite button on the RIGHT -->
-            <Button
+            <ImageButton
                 android:id="@+id/btnBeeFavorite"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="@drawable/ic_bee_favorite"
-                android:clickable="true"
-                android:contentDescription="Favorite"
-                android:focusable="true"
-                android:gravity="center"
-                android:padding="0dp"
-                android:stateListAnimator="@null"
-                android:text="🐝"
-                android:textColor="@android:color/white"
-                android:textSize="18sp" />
+            android:src="@drawable/ic_bee_outline"
+            android:contentDescription="Favorite"
+            android:padding="8dp"
+            android:scaleType="centerInside"
+            android:backgroundTint="@null"
+            app:tint="@null" />
+
+
 
 
         </LinearLayout>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/white"
     android:padding="16dp">
 
@@ -13,17 +13,40 @@
         android:orientation="vertical"
         android:gravity="center_horizontal">
 
-        <!--  Profile Image -->
-        <ImageView
-            android:id="@+id/imgProfilePicture"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@android:drawable/ic_menu_camera"
-            android:scaleType="centerCrop"
-            android:background="@drawable/circle_bg_grey"
-            android:contentDescription="@string/profile_picture"
+        <!--  Profile Image + Badge -->
+        <FrameLayout
+            android:id="@+id/profileImageContainer"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
             android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="8dp"
+            android:gravity="center">
+
+            <!-- Circular profile image with border + shadow -->
+            <ImageView
+                android:id="@+id/imgProfilePicture"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:scaleType="centerCrop"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_profile_circle"
+                android:padding="4dp"
+                android:elevation="6dp"
+                android:contentDescription="@string/profile_picture" />
+
+            <!-- Small badge overlay (🎓 ⭐ 🐝) -->
+            <ImageView
+                android:id="@+id/imgProfileBadge"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="bottom|end"
+                android:layout_marginEnd="2dp"
+                android:layout_marginBottom="2dp"
+                android:src="@drawable/ic_badge_buzzboard"
+                android:padding="4dp"
+                android:elevation="8dp"
+                android:visibility="gone" />
+        </FrameLayout>
 
         <!--  Name -->
         <TextView
@@ -47,17 +70,20 @@
 
         <!--  Stats Row -->
         <LinearLayout
+            android:id="@+id/layoutStatsRow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center"
             android:layout_marginTop="16dp">
 
+            <!-- Posts -->
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:id="@+id/layoutPosts"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:orientation="vertical"
-                android:layout_marginHorizontal="16dp"
                 android:gravity="center">
 
                 <TextView
@@ -77,15 +103,19 @@
                     android:textColor="@color/grey" />
             </LinearLayout>
 
+            <!-- Following (CLICKABLE) -->
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:id="@+id/layoutFollowing"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:orientation="vertical"
-                android:layout_marginHorizontal="16dp"
-                android:gravity="center">
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true">
 
                 <TextView
-                    android:id="@+id/tvFavoriteCount"
+                    android:id="@+id/tvFollowingCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0"
@@ -96,7 +126,35 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Favorites"
+                    android:text="Following"
+                    android:textSize="14sp"
+                    android:textColor="@color/grey" />
+            </LinearLayout>
+
+            <!-- Followers (CLICKABLE) -->
+            <LinearLayout
+                android:id="@+id/layoutFollowers"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:id="@+id/tvFollowersCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Followers"
                     android:textSize="14sp"
                     android:textColor="@color/grey" />
             </LinearLayout>
@@ -120,27 +178,37 @@
             android:layout_marginTop="16dp"
             android:background="@color/grey" />
 
-        <!--  User’s Posts -->
+        <!--  Activity / Tabs Title -->
         <TextView
+            android:id="@+id/tvActivityHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Your Posts"
+            android:text="Activity"
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="@color/black"
             android:layout_marginTop="12dp"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="4dp" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerUserPosts"
+        <!--  Tabs: Posts | Favorites | Registered -->
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/profileTabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabIndicatorColor="@color/yellow"
+            app:tabSelectedTextColor="@color/black"
+            app:tabTextColor="@color/grey"
+            app:tabMode="fixed"
+            app:tabGravity="fill" />
+
+        <!--  ViewPager for tab content -->
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/profileViewPager"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:nestedScrollingEnabled="false"
             android:layout_marginTop="8dp"
-            android:clipToPadding="false"
-            android:paddingBottom="60dp"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            tools:listitem="@layout/item_post_grid" />
+            android:layout_marginBottom="60dp" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

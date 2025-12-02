@@ -17,7 +17,12 @@
     <string name="post_description">Post Description</string>
     <string name="post_location">Post Location</string>
     <string name="app_add_post">Add Post</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="label_account_type">Account type</string>
+    <string-array name="account_type_options">
+        <item>Student</item>
+        <item>Organization</item>
+        <item>BuzzBoard Official</item>
+    </string-array>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="home_fragment">Home Fragment</string>
     <string name="add_post_fragment">Add Post Fragment</string>
@@ -39,5 +44,6 @@
     <string name="register">Register</string>
     <string name="location">Location</string>
     <string name="short_description_of_the_event">Short description of the event...</string>
+    <string name="back" />
 
 </resources>
