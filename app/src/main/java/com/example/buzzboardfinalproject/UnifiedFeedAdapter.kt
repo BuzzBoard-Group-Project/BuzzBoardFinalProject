@@ -84,6 +84,7 @@ class UnifiedFeedAdapter(
     // ======================================================
     inner class PostVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
+        private val avatar: ImageView = itemView.findViewById(R.id.post_profile_image) // 👈 NEW
         private val img: ImageView = itemView.findViewById(R.id.recyclerImage)
         private val title: TextView = itemView.findViewById(R.id.recyclerTitle)
         private val desc: TextView = itemView.findViewById(R.id.recyclerCaption)
@@ -100,48 +101,62 @@ class UnifiedFeedAdapter(
         fun bind(post: Post) {
             val context = itemView.context
 
-            // Title
+            // Basic text
             title.text = post.title
-
-            // Hide caption on feed
             desc.visibility = View.GONE
-
-            // Location
             location.text = post.location
 
-            // 🔹 Load username from Users node using publisher uid
-            val publisherId = post.publisher   // make sure Post has "publisher: String?"
+            // Default username + avatar
+            username.text = if (post.username.isNullOrEmpty()) "BuzzBoard User" else post.username
+            avatar.setImageResource(R.drawable.default_profile)
+
+            // ---------- LOAD AUTHOR NAME + PROFILE PIC ----------
+            val publisherId = post.publisher   // make sure Post has this uid field
+
             if (!publisherId.isNullOrEmpty()) {
-
-                // Temporary placeholder while it loads
-                username.text = post.username.takeIf { !it.isNullOrEmpty() } ?: "BuzzBoard User"
-
-                // Load real name once
                 usersRef.child(publisherId)
                     .addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(snapshot: DataSnapshot) {
-                            val name = snapshot.child("name")
-                                .getValue(String::class.java)
+                            val name = snapshot.child("name").getValue(String::class.java)
+                            val profileImage = snapshot.child("profileImage").getValue(String::class.java)
+
                             if (!name.isNullOrEmpty()) {
                                 username.text = name
+                            }
+
+                            if (!profileImage.isNullOrEmpty()) {
+                                try {
+                                    val bytes = android.util.Base64.decode(
+                                        profileImage,
+                                        android.util.Base64.DEFAULT
+                                    )
+                                    val bmp = android.graphics.BitmapFactory.decodeByteArray(
+                                        bytes, 0, bytes.size
+                                    )
+                                    avatar.setImageBitmap(bmp)
+                                } catch (e: Exception) {
+                                    avatar.setImageResource(R.drawable.default_profile)
+                                }
                             }
                         }
 
                         override fun onCancelled(error: DatabaseError) {}
                     })
 
-                // Tap username → open that user's profile
-                username.setOnClickListener {
+                // Tap username or avatar → open their profile
+                val openProfile: (View) -> Unit = {
                     val intent = Intent(context, UserProfileActivity::class.java)
                     intent.putExtra("user_id", publisherId)
                     context.startActivity(intent)
                 }
+                username.setOnClickListener(openProfile)
+                avatar.setOnClickListener(openProfile)
             } else {
-                username.text = "BuzzBoard User"
                 username.setOnClickListener(null)
+                avatar.setOnClickListener(null)
             }
 
-            // Date/time
+            // ---------- Date / time ----------
             if (post.eventDateMillis > 0L) {
                 dateTime.visibility = View.VISIBLE
                 dateTime.text = formatDate(post.eventDateMillis)
@@ -149,9 +164,7 @@ class UnifiedFeedAdapter(
                 dateTime.visibility = View.GONE
             }
 
-
-
-    // Image
+            // ---------- Main image (unchanged) ----------
             val imgStr = post.postimage
             if (imgStr.startsWith("http")) {
                 Glide.with(context).load(imgStr).into(img)
@@ -169,7 +182,8 @@ class UnifiedFeedAdapter(
                 img.setImageResource(R.drawable.add_image_icon)
             }
 
-            val postId = post.postid ?: ""
+
+    val postId = post.postid ?: ""
 
             if (postId.isNotEmpty()) {
                 // ---- Likes ----
